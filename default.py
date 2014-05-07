@@ -983,7 +983,7 @@ if success:
                         continue
                     except:
                         continue               
-                elif 'annonce' in str(lien).lower() and ' vo ' in str(lien).lower():
+                elif 'annonce' in str(lien).lower() and ' VO' in str(lien):
                     lienid=lien['href'][:lien['href'].find('&')].replace('/video/player_gen_cmedia=','') 
                     trailerallo = api.trailer(lienid)
                     try:
