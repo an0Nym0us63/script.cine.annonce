@@ -1516,10 +1516,9 @@ if success:
         api = allocine()
         api.configure('100043982026','29d185d98c984a359e6e6f26a0474269')
         addon = xbmcaddon.Addon()
-        number_trailers =  addon.getSetting('number_trailers_sug')
         do_curtains = 'false'
-        hide_info = addon.getSetting('hide_info_sug')
-        hide_title = addon.getSetting('hide_title_sug')
+        hide_info = addon.getSetting('hide_info_search')
+        hide_title = addon.getSetting('hide_title_search')
         addon_path = addon.getAddonInfo('path')
         resources_path = xbmc.translatePath( os.path.join( addon_path, 'resources' ) ).decode('utf-8')
         media_path = xbmc.translatePath( os.path.join( resources_path, 'media' ) ).decode('utf-8')
