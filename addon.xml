@@ -16,7 +16,8 @@
     <platform>all</platform>
     <summary lang="en">La boite à outils des bandes annonces</summary>
     <description lang="en">
-	Permet de choisir 4 options. La première vous proposera des bandes annonces de films que vous avez selon des critères que vous choisissez et vous laissera choisir ou choisira le film à lancer.
+	Permet de choisir 4 options. 
+	La première vous proposera des bandes annonces de films que vous avez selon des critères que vous choisissez et vous laissera choisir ou choisira le film à lancer.
 	La deuxième permet de voir un certains nombres de bandes annonces de films que vous possédez selon des critères.
 	La troisième vous proposera des bandes annonces de films (a l'affiche, populaire, sorties DVD etc...)
 	La dernière permet de rechercher un film et voir sa bande annonce
