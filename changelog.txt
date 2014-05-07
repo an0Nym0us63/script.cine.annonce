@@ -1,7 +1,7 @@
 [B]1.1.0[/B]
-- Rajout de la recherche a venir et a l'affiche en se bassant sur allocine
+- Rajout de la recherche a venir et a l'affiche en se basant sur allocine
 - rajout d'une section recherche de film pour voir la bande annonce d'un film en le recherchant
 - correction de bugs
 
 [B]1.0.0[/B]
-- Premiere version
+- Première version
