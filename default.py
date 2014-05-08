@@ -106,12 +106,13 @@ if success:
                 ACTION_UP = 3
                 ACTION_DOWN = 4
                 ACTION_TAB = 18
+                ACTION_STOP = 13
                 
                 xbmc.log('action  =' + str(action.getId()))
                 
                 global exit_requested
                 global movie_file
-                if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK:
+                if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK or action == ACTION_STOP:
                     xbmc.Player().stop()
                     exit_requested = True
                     self.close()
@@ -208,13 +209,14 @@ if success:
                 ACTION_RIGHT = 2
                 ACTION_UP = 3
                 ACTION_DOWN = 4
-                ACTION_TAB = 18
+                ACTION_TAB = 18                
+                ACTION_STOP = 13
                 
                 xbmc.log('action  =' + str(action.getId()))
                 global do_timeout
                 global exit_requested
                 global movie_file
-                if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK:
+                if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK or action == ACTION_STOP:
                     do_timeout=False
                     xbmc.Player().stop()
                     exit_requested=True
@@ -349,9 +351,6 @@ if success:
             if askTrailer:
                 global trailerMode
                 trailerMode = True
-            else:
-                global trailerMode
-                trailerMode = False
               
             if promptUser or promptGenres:
                 askGenres = xbmcgui.Dialog().yesno("Filtrer sur un genre", "Voulez-vous choisir un genre ?")
@@ -540,7 +539,9 @@ if success:
             global trailer
             global do_timeout
             global exit_requested  
-            global trailerMode  
+            global trailerMode
+            global movie_file
+            movie_file=''
             exit_requested = False
             player = XBMCPlayer()
             # We need to check that we have enough trailers to meet our user's requirements  
@@ -587,16 +588,20 @@ if success:
                 movielenghtm = movielenghtm.replace('"','')
                 randomList.append(str(i) + ' : '+ movietitle + ' (' +movieyear+') - ' + moviegenre +' - ' +movielenghth + 'h' + movielenghtm +'min')
                 i+=1
-            if randomList == []:
-                a = xbmcgui.Dialog().ok('Dommage', u'Aucun de vos films ne repond aux critères')
-            else:
-                a = xbmcgui.Dialog().select("Quel film voulez-vous lancer :", randomList)
-            if not a == -1 and not randomList == []:
+            if movie_file:
                 success = True
-                myMovie = simplejson.dumps(myRandomMovies[a]["file"],ensure_ascii=False, encoding='utf8')
-            else:
-                success = False
-                myMovie = ""
+                myMovie=movie_file
+            else:    
+                if randomList == []:
+                    a = xbmcgui.Dialog().ok('Dommage', u'Aucun de vos films ne repond aux critères')
+                else:
+                    a = xbmcgui.Dialog().select("Quel film voulez-vous lancer :", randomList)
+                if not a == -1 and not randomList == []:
+                    success = True
+                    myMovie = simplejson.dumps(myRandomMovies[a]["file"],ensure_ascii=False, encoding='utf8')
+                else:
+                    success = False
+                    myMovie = ""
             
             return success, myMovie
         
@@ -608,7 +613,7 @@ if success:
                         filteredlist.append(movie)
         
             return filteredlist
-        
+        global movie_file
         moviesJSON = getMovieLibrary()
         
         filter = BuildFilter(moviesJSON)
@@ -1188,6 +1193,7 @@ if success:
                 ACTION_TAB = 18
                 ACTION_M = 122
                 ACTION_Q=34
+                ACTION_STOP = 13
                 
                 global exit_requested
                 global movie_file
@@ -1199,21 +1205,14 @@ if success:
                     strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']
                     xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
                 
-                if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK:
+                if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK or action == ACTION_STOP:
                     xbmc.Player().stop()
                     exit_requested = True
                     self.close()
         
                 if action == ACTION_RIGHT or action == ACTION_TAB:
                     xbmc.Player().stop()
-                    
-                if action == ACTION_ENTER:
-                    exit_requested = True
-                    xbmc.Player().stop()
-                    movie_file = trailer["file"]
-                    self.getControl(30011).setVisible(False)
-                    self.close()
-                    
+                                    
                 if action == ACTION_M:
                     self.getControl(30011).setVisible(True)
                     xbmc.sleep(2000)
@@ -1353,6 +1352,7 @@ if success:
                 ACTION_DOWN = 4
                 ACTION_TAB = 18
                 ACTION_Q = 34
+                ACTION_STOP=13
                 
                 global do_timeout
                 global exit_requested
@@ -1360,7 +1360,7 @@ if success:
                 global movie_file
                 movie_file=''
                 
-                if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK:
+                if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK or ACTION_STOP:
                     do_timeout=False
                     xbmc.Player().stop()
                     exit_requested=True
@@ -1376,13 +1376,7 @@ if success:
                 if action == ACTION_RIGHT or action == ACTION_TAB:
                     xbmc.Player().stop()
                     self.close()
-        
-                if action == ACTION_ENTER:
-                    movie_file = trailer["file"]
-                    xbmc.Player().stop()
-                    exit_requested=True
-                    self.close()
-                                    
+                                                            
         def playTrailers():
             global exit_requested
             global movie_file
@@ -2057,6 +2051,7 @@ if success:
                 ACTION_TAB = 18
                 ACTION_M = 122
                 ACTION_Q=34
+                ACTION_STOP=13
                 
                 global exit_requested
                 global movie_file
@@ -2068,21 +2063,14 @@ if success:
                     strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']
                     xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
                 
-                if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK:
+                if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK or action==ACTION_STOP:
                     xbmc.Player().stop()
                     exit_requested = True
                     self.close()
         
                 if action == ACTION_RIGHT or action == ACTION_TAB:
                     xbmc.Player().stop()
-                    
-                if action == ACTION_ENTER:
-                    exit_requested = True
-                    xbmc.Player().stop()
-                    movie_file = trailer["file"]
-                    self.getControl(30011).setVisible(False)
-                    self.close()
-                    
+                 
                 if action == ACTION_M:
                     self.getControl(30011).setVisible(True)
                     xbmc.sleep(2000)
@@ -2222,6 +2210,7 @@ if success:
                 ACTION_DOWN = 4
                 ACTION_TAB = 18
                 ACTION_Q = 34
+                ACTION_STOP = 13
                 
                 global do_timeout
                 global exit_requested
@@ -2229,7 +2218,7 @@ if success:
                 global movie_file
                 movie_file=''
                 
-                if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK:
+                if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK or action ==ACTION_STOP:
                     do_timeout=False
                     xbmc.Player().stop()
                     exit_requested=True
@@ -2245,13 +2234,7 @@ if success:
                 if action == ACTION_RIGHT or action == ACTION_TAB:
                     xbmc.Player().stop()
                     self.close()
-        
-                if action == ACTION_ENTER:
-                    movie_file = trailer["file"]
-                    xbmc.Player().stop()
-                    exit_requested=True
-                    self.close()
-                                    
+                  
         def playTrailers():
             global exit_requested
             global movie_file
@@ -2306,6 +2289,7 @@ if success:
             return movielist
         if not xbmc.Player().isPlaying() and not check_for_xsqueeze():
             DO_CURTIANS = addon.getSetting('do_animation_search')
+            hidenoba=addon.getSetting('hide_noba')
             if DO_CURTIANS == 'true':
                 xbmc.Player().play(open_curtain_path)
                 while xbmc.Player().isPlaying():
@@ -2328,6 +2312,26 @@ if success:
                 try:
                     for movie in movielist['feed']['movie']:
                         ficheresult=api.movie(movie['code'])
+                        if hidenoba:
+                            pagetrailer=''
+                            for x in ficheresult['movie']['link']:
+                                if x.has_key('name') and 'Bandes annonces' in x['name']:
+                                    pagetrailer=x['href']
+                                    break
+                                else:
+                                    continue
+                            if pagetrailer<>'':
+                                soup = BeautifulSoup( urllib2.urlopen(pagetrailer), "html.parser" )
+                                rows = soup.findAll("a")
+                                hasba=0
+                                for lien in rows:
+                                    if 'annonce' in str(lien):
+                                        hasba=1
+                                        break
+                                if hasba==0:
+                                    continue
+                            else:
+                                continue
                         ficheresulttitle=ficheresult['movie']['title'].encode('utf-8')
                         ficheresulttitleori=ficheresult['movie']['originalTitle']
                         try:
@@ -2339,7 +2343,7 @@ if success:
                             resultat.append(dictres)
                             titres.append(ficheresulttitle+' - '+str(yearresult))
                     selectChoice = xbmcgui.Dialog().select(u"Résultats de recherche", titres)
-                    if len(str(selectChoice))>0:
+                    if selectChoice<>-1:
                         titrefull=titres[selectChoice]
                         titre=titrefull[:titrefull.find('-')-1]
                         year=titrefull[titrefull.find('-')+2:]
@@ -2390,6 +2394,8 @@ if success:
                             title=title.encode("utf-8")
                             dict={'trailer':pagetrailer,'id': [title,year,plot,releasedate,runtime,thumbs,poster],'source':'allo','title':title}
                             trailers.append(dict)
+                    else:
+                        trailers=[]                            
                 except:
                     xbmcgui.Dialog().notification(u'Aucun résultat', moviechoice, xbmcgui.NOTIFICATION_INFO, 5000)
                 

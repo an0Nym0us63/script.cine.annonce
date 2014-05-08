@@ -251,12 +251,13 @@ class movieWindow(xbmcgui.WindowXMLDialog):
 		ACTION_UP = 3
 		ACTION_DOWN = 4
 		ACTION_TAB = 18
+		ACTION_STOP = 13
 		
 		xbmc.log('action  =' + str(action.getId()))
 		
 		global exit_requested
 		global movie_file
-		if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK:
+		if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK or action == ACTION_STOP:
 			xbmc.Player().stop()
 			exit_requested = True
 			self.close()
@@ -354,12 +355,13 @@ class infoWindow(xbmcgui.WindowXMLDialog):
 		ACTION_UP = 3
 		ACTION_DOWN = 4
 		ACTION_TAB = 18
+		ACTION_STOP = 13
 		
 		xbmc.log('action  =' + str(action.getId()))
 		global do_timeout
 		global exit_requested
 		global movie_file
-		if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK:
+		if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK or ACTION_STOP:
 			do_timeout=False
 			xbmc.Player().stop()
 			exit_requested=True
