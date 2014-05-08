@@ -1133,8 +1133,11 @@ if success:
                 global source
                 random.shuffle(trailers)
                 
-                trailer=trailers[0]
-                
+                try:
+                    trailer=trailers[0]
+                except:
+                    NUMBER_TRAILERS = 0
+                    self.close()
                 if trailer['trailer'] in ['tmdb']:
                     trailer=getTmdbTrailer(trailer['id'])
                 else:
