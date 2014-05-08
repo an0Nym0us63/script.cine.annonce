@@ -350,6 +350,9 @@ if success:
             if askTrailer:
                 global trailerMode
                 trailerMode = True
+            else:
+                global trailerMode
+                trailerMode = False
               
             if promptUser or promptGenres:
                 askGenres = xbmcgui.Dialog().yesno("Filtrer sur un genre", "Voulez-vous choisir un genre ?")
