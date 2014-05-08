@@ -306,8 +306,7 @@ if success:
           
             trailerMode = _S_( "trailermode" ) == "true"
           
-            if trailerMode:
-                numTrailers = int(float(_S_( "numtrailers" ) ) )
+            numTrailers = int(float(_S_( "numtrailers" ) ) )
             
             playlistMode = _S_("playlistmode") == "true"
           
@@ -540,7 +539,8 @@ if success:
             trailerList = []
             global trailer
             global do_timeout
-            global exit_requested    
+            global exit_requested  
+            global trailerMode  
             exit_requested = False
             player = XBMCPlayer()
             # We need to check that we have enough trailers to meet our user's requirements  
@@ -557,19 +557,20 @@ if success:
                 if not movieN in trailerList:
                     trailerList.append(movieN)           
                     myRandomMovies.append(movieN)
-            while not exit_requested:
-                for item in trailerList:
-                    trailer=item
-                    myMovieWindow=movieWindow('script-trailerwindow.xml', addon_path,'default',)
-                    myMovieWindow.doModal()
-                    del myMovieWindow
-                    if exit_requested:
-                        break
-                if not exit_requested:
-                    while player.isPlaying():
-                        xbmc.sleep(250)
-                exit_requested=True
-            
+            if trailerMode:
+                while not exit_requested:
+                    for item in trailerList:
+                        trailer=item
+                        myMovieWindow=movieWindow('script-trailerwindow.xml', addon_path,'default',)
+                        myMovieWindow.doModal()
+                        del myMovieWindow
+                        if exit_requested:
+                            break
+                    if not exit_requested:
+                        while player.isPlaying():
+                            xbmc.sleep(250)
+                    exit_requested=True
+                
             randomList = []
             i = 1
             for movie in myRandomMovies:
@@ -613,13 +614,12 @@ if success:
         filter = BuildFilter(moviesJSON)
         # apply filter to our library
         filteredMovies = FilterMovies(moviesJSON, filter, trailerMode)
-        if trailerMode:
-            success, myMovie = getTrailers(filteredMovies, numTrailers)
-            if success:
-                xbmc.executebuiltin('Playmedia(' + myMovie.encode('utf-8') + ')')
-            elif _S_( "randommode" )=='true':
-                randomMovie = random.choice(filteredMovies)
-                xbmc.executebuiltin('Playmedia(' + randomMovie["file"].encode('utf-8') + ')')
+        success, myMovie = getTrailers(filteredMovies, numTrailers)
+        if success:
+            xbmc.executebuiltin('Playmedia(' + myMovie.encode('utf-8') + ')')
+        elif _S_( "randommode" )=='true':
+            randomMovie = random.choice(filteredMovies)
+            xbmc.executebuiltin('Playmedia(' + randomMovie["file"].encode('utf-8') + ')')
         del bs
     elif choix==2:
         import randomtrailer
