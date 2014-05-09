@@ -2072,7 +2072,7 @@ if success:
         do_curtains = 'false'
         hide_info = addon.getSetting('hide_info_search')
         hide_title = addon.getSetting('hide_title_search')
-        wantedpath=hide_title = addon.getSetting('wanted_path')
+        wantedpath = addon.getSetting('wanted_path')
         addon_path = addon.getAddonInfo('path')
         resources_path = xbmc.translatePath( os.path.join( addon_path, 'resources' ) ).decode('utf-8')
         media_path = xbmc.translatePath( os.path.join( resources_path, 'media' ) ).decode('utf-8')
