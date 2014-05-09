@@ -1694,7 +1694,7 @@ if success:
                     pathadd=addon_path.replace('\\script.cine.annonce-master','')
                     pathadd=os.path.join(pathadd,'XBMC-CouchPotato-Manager-master')
                     pathadd=os.path.join(pathadd,'addon.py')
-                    if os.path.isfile(xpathadd):
+                    if os.path.isfile(pathadd):
                       
                         try:
                             xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato.encode("utf-8")+')')
@@ -1893,7 +1893,7 @@ if success:
                     pathadd=addon_path.replace('\\script.cine.annonce-master','')
                     pathadd=os.path.join(pathadd,'XBMC-CouchPotato-Manager-master')
                     pathadd=os.path.join(pathadd,'addon.py')
-                    if os.path.isfile(xpathadd):
+                    if os.path.isfile(pathadd):
                       
                         try:
                             xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato.encode("utf-8")+')')
@@ -2624,7 +2624,7 @@ if success:
                     pathadd=addon_path.replace('\\script.cine.annonce-master','')
                     pathadd=os.path.join(pathadd,'XBMC-CouchPotato-Manager-master')
                     pathadd=os.path.join(pathadd,'addon.py')
-                    if os.path.isfile(xpathadd):
+                    if os.path.isfile(pathadd):
                       
                         try:
                             xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato.encode("utf-8")+')')
@@ -2823,7 +2823,7 @@ if success:
                     pathadd=addon_path.replace('\\script.cine.annonce-master','')
                     pathadd=os.path.join(pathadd,'XBMC-CouchPotato-Manager-master')
                     pathadd=os.path.join(pathadd,'addon.py')
-                    if os.path.isfile(xpathadd):
+                    if os.path.isfile(pathadd):
                       
                         try:
                             xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato.encode("utf-8")+')')
