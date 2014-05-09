@@ -4,21 +4,6 @@ import xbmcaddon
 addon = xbmcaddon.Addon()
 addon_path = addon.getAddonInfo('path')
 
-REMOTE_DBG = False
-
-# append pydev remote debugger
-if REMOTE_DBG:
-    # Make pydev debugger works for auto reload.
-    # Note pydevd module need to be copied in XBMC\system\python\Lib\pysrc
-    try:
-        import pysrc.pydevd as pydevd
-    # stdoutToServer and stderrToServer redirect stdout and stderr to eclipse console
-        pydevd.settrace('localhost', stdoutToServer=True, stderrToServer=True)
-    except ImportError:
-        sys.stderr.write("Error: " +
-            "You must add org.python.pydev.debug.pysrc to your PYTHONPATH.")
-        sys.exit(1)
-
 class blankWindow(xbmcgui.WindowXML):
     def onInit(self):
         pass
@@ -1397,7 +1382,6 @@ if success:
                             else:
                                 continue
                             title=title.encode("utf-8")
-                            print str(movie)
                             dict={'trailer':pagetrailer,'id': [title,year,plot,releasedate,runtime,thumbs,poster],'source':'allo','title':movie['title']}
                             tmdbTrailers.append(dict)
             
@@ -1508,9 +1492,9 @@ if success:
                     if linkallo:
                         trailer_url=linkallo
                         source='Allocine'
-                        dictInfo = {'title':movieId[0],'trailer': trailer_url,'year':movieId[1],'studio':[],'mpaa':'','file':'','thumbnail':movieId[6],'fanart':movieId[5],'director':[],'writer':[],'plot':movieId[2],'cast':'','runtime':movieIdori[4],'genre':[],'source': 'Allocine','type':''} 
+                        dictInfo = {'title':movieId[0],'trailer': trailer_url,'year':movieId[1],'studio':[],'mpaa':'','file':'','thumbnail':movieId[6],'fanart':movieId[5],'director':[],'writer':[],'plot':movieId[2],'cast':'','runtime':movieIdori[4],'genre':[],'source': 'Allocine','type':'','imdbid':''} 
                     else:
-                        dictInfo = {'title':'','trailer': '','year':0,'studio':[],'mpaa':'','file':'','thumbnail':'','fanart':'','director':[],'writer':[],'plot':'','cast':'','runtime':0,'genre':[],'source': 'tmdb','type':''} 
+                        dictInfo = {'title':'','trailer': '','year':0,'studio':[],'mpaa':'','file':'','thumbnail':'','fanart':'','director':[],'writer':[],'plot':'','cast':'','runtime':0,'genre':[],'source': 'tmdb','type':'','imdbid':''} 
                     return dictInfo
                 else:
                     movieId=infomovie
@@ -1531,7 +1515,7 @@ if success:
                 movieString = unicode(movieString, 'utf-8', errors='ignore')
                 movieString = json.loads(movieString)
             except:
-                dictInfo = {'title':'','trailer': '','year':0,'studio':[],'mpaa':'','file':'','thumbnail':'','fanart':'','director':[],'writer':[],'plot':'','cast':'','runtime':0,'genre':[],'source': 'tmdb','type':''} 
+                dictInfo = {'title':'','trailer': '','year':0,'studio':[],'mpaa':'','file':'','thumbnail':'','fanart':'','director':[],'writer':[],'plot':'','cast':'','runtime':0,'genre':[],'source': 'tmdb','type':'','imdbid':''} 
             else:
                 for trailer in movieString['trailers']['youtube']:
                     if 'source' in trailer:
@@ -1591,6 +1575,10 @@ if success:
                         addMovie=True
                 if movieString['adult']=='true':addMovie = False
                 source='tmdb'
+                try:
+                    imdbid=movieString['imdb_id']
+                except:
+                    imdbid=''
                 if allo<>'':
                     linkallo=alloba(allo)
                     if linkallo:
@@ -1598,9 +1586,9 @@ if success:
                         trailer_url=linkallo
                         source='Allocine'
                 if not addMovie:
-                    dictInfo = {'title':'','trailer': '','year':0,'studio':[],'mpaa':'','file':'','thumbnail':'','fanart':'','director':[],'writer':[],'plot':'','cast':'','runtime':0,'genre':[],'source': 'tmdb','type':''} 
+                    dictInfo = {'title':'','trailer': '','year':0,'studio':[],'mpaa':'','file':'','thumbnail':'','fanart':'','director':[],'writer':[],'plot':'','cast':'','runtime':0,'genre':[],'source': 'tmdb','type':'','imdbid':''} 
                 else:
-                    dictInfo = {'title':title,'trailer': trailer_url,'year':year,'studio':studio,'mpaa':mpaa,'file':'','thumbnail':thumbnail,'fanart':fanart,'director':director,'writer':writer,'plot':plot,'cast':cast,'runtime':runtime,'genre':genre,'source': source,'type':type} 
+                    dictInfo = {'title':title,'trailer': trailer_url,'year':year,'studio':studio,'mpaa':mpaa,'file':'','thumbnail':thumbnail,'fanart':fanart,'director':director,'writer':writer,'plot':plot,'cast':cast,'runtime':runtime,'genre':genre,'source': source,'type':type,'imdbid':imdbid} 
             return dictInfo
          
         class trailerWindow(xbmcgui.WindowXMLDialog):
@@ -1680,7 +1668,10 @@ if success:
                 movie_file=''
                 xbmc.log(str(action.getId()))
                 if action == ACTION_Q:
-                    strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']
+                    if trailer['imdbid']<>'':
+                        strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']+'&imdb_id='+str(trailer['imdbid'])
+                    else:
+                        strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']
                     xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
                 
                 if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK or action == ACTION_STOP:
@@ -1845,8 +1836,11 @@ if success:
                     self.close()
                 
                 if action == ACTION_Q:
-                    strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']
-                    xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')') 
+                    if trailer['imdbid']<>'':
+                        strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']+'&imdb_id='+str(trailer['imdbid'])
+                    else:
+                        strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']
+                    xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
                     
                 if action == ACTION_I or action == ACTION_DOWN:
                     self.close()
@@ -2260,7 +2254,6 @@ if success:
                             else:
                                 continue
                             title=title.encode("utf-8")
-                            print str(movie)
                             dict={'trailer':pagetrailer,'id': [title,year,plot,releasedate,runtime,thumbs,poster],'source':'allo','title':movie['title']}
                             tmdbTrailers.append(dict)
             
@@ -2371,9 +2364,9 @@ if success:
                     if linkallo:
                         trailer_url=linkallo
                         source='Allocine'
-                        dictInfo = {'title':movieId[0],'trailer': trailer_url,'year':movieId[1],'studio':[],'mpaa':'','file':'','thumbnail':movieId[6],'fanart':movieId[5],'director':[],'writer':[],'plot':movieId[2],'cast':'','runtime':movieIdori[4],'genre':[],'source': 'Allocine','type':''} 
+                        dictInfo = {'title':movieId[0],'trailer': trailer_url,'year':movieId[1],'studio':[],'mpaa':'','file':'','thumbnail':movieId[6],'fanart':movieId[5],'director':[],'writer':[],'plot':movieId[2],'cast':'','runtime':movieIdori[4],'genre':[],'source': 'Allocine','type':'','imdbid':''} 
                     else:
-                        dictInfo = {'title':'','trailer': '','year':0,'studio':[],'mpaa':'','file':'','thumbnail':'','fanart':'','director':[],'writer':[],'plot':'','cast':'','runtime':0,'genre':[],'source': 'tmdb','type':''} 
+                        dictInfo = {'title':'','trailer': '','year':0,'studio':[],'mpaa':'','file':'','thumbnail':'','fanart':'','director':[],'writer':[],'plot':'','cast':'','runtime':0,'genre':[],'source': 'tmdb','type':'','imdbid':''} 
                     return dictInfo
                 else:
                     movieId=infomovie
@@ -2394,7 +2387,7 @@ if success:
                 movieString = unicode(movieString, 'utf-8', errors='ignore')
                 movieString = json.loads(movieString)
             except:
-                dictInfo = {'title':'','trailer': '','year':0,'studio':[],'mpaa':'','file':'','thumbnail':'','fanart':'','director':[],'writer':[],'plot':'','cast':'','runtime':0,'genre':[],'source': 'tmdb','type':''} 
+                dictInfo = {'title':'','trailer': '','year':0,'studio':[],'mpaa':'','file':'','thumbnail':'','fanart':'','director':[],'writer':[],'plot':'','cast':'','runtime':0,'genre':[],'source': 'tmdb','type':'','imdbid':''} 
             else:
                 for trailer in movieString['trailers']['youtube']:
                     if 'source' in trailer:
@@ -2454,6 +2447,10 @@ if success:
                         addMovie=True
                 if movieString['adult']=='true':addMovie = False
                 source='tmdb'
+                try:
+                    imdbid=movieString['imdb_id']
+                except:
+                    imdbid=''
                 if allo<>'':
                     linkallo=alloba(allo)
                     if linkallo:
@@ -2461,9 +2458,9 @@ if success:
                         trailer_url=linkallo
                         source='Allocine'
                 if not addMovie:
-                    dictInfo = {'title':'','trailer': '','year':0,'studio':[],'mpaa':'','file':'','thumbnail':'','fanart':'','director':[],'writer':[],'plot':'','cast':'','runtime':0,'genre':[],'source': 'tmdb','type':''} 
+                    dictInfo = {'title':'','trailer': '','year':0,'studio':[],'mpaa':'','file':'','thumbnail':'','fanart':'','director':[],'writer':[],'plot':'','cast':'','runtime':0,'genre':[],'source': 'tmdb','type':'','imdbid':''} 
                 else:
-                    dictInfo = {'title':title,'trailer': trailer_url,'year':year,'studio':studio,'mpaa':mpaa,'file':'','thumbnail':thumbnail,'fanart':fanart,'director':director,'writer':writer,'plot':plot,'cast':cast,'runtime':runtime,'genre':genre,'source': source,'type':type} 
+                    dictInfo = {'title':title,'trailer': trailer_url,'year':year,'studio':studio,'mpaa':mpaa,'file':'','thumbnail':thumbnail,'fanart':fanart,'director':director,'writer':writer,'plot':plot,'cast':cast,'runtime':runtime,'genre':genre,'source': source,'type':type,'imdbid':imdbid} 
             return dictInfo
          
         class trailerWindow(xbmcgui.WindowXMLDialog):
@@ -2538,7 +2535,10 @@ if success:
                 movie_file=''
                 xbmc.log(str(action.getId()))
                 if action == ACTION_Q:
-                    strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']
+                    if trailer['imdbid']<>'':
+                        strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']+'&imdb_id='+str(trailer['imdbid'])
+                    else:
+                        strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']
                     xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
                 
                 if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK or action==ACTION_STOP:
@@ -2703,8 +2703,11 @@ if success:
                     self.close()
                 
                 if action == ACTION_Q:
-                    strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']
-                    xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')') 
+                    if trailer['imdbid']<>'':
+                        strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']+'&imdb_id='+str(trailer['imdbid'])
+                    else:
+                        strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']
+                    xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
                     
                 if action == ACTION_I or action == ACTION_DOWN:
                     self.close()
