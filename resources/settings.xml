@@ -40,7 +40,10 @@
     <setting id="do_animation_search" type="bool" label="33001" default="false" />
     <setting id="hide_title_search" type="bool" label="33008" default="false"/>
     <setting id="hide_info_search" type="bool" label="33003" default="false" />
-    <setting id="hide_noba" type="bool" label="Ne pas montrer les films sans BA dans les resultats" default="false" />
+    <setting id="hide_noba" type="bool" label="Ne pas montrer les films sans bande-annonces dans les resultats" default="false" />
+ </category> 
+ <category label="General">
+    <setting id="wanted_path" label="Repertoire ou placer la liste des films voulus si Couchpotato n'existe pas" type="folder" option="writeable" />
  </category>
 </settings>
 
