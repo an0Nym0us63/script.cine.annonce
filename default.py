@@ -4,7 +4,7 @@ import xbmcaddon
 addon = xbmcaddon.Addon()
 addon_path = addon.getAddonInfo('path')
 
-REMOTE_DBG = False 
+REMOTE_DBG = False
 
 # append pydev remote debugger
 if REMOTE_DBG:
@@ -1135,6 +1135,7 @@ if success:
         hide_info = addon.getSetting('hide_info_sug')
         hide_title = addon.getSetting('hide_title_sug')
         addon_path = addon.getAddonInfo('path')
+        wantedpath=addon.getSetting('wanted_path')
         resources_path = xbmc.translatePath( os.path.join( addon_path, 'resources' ) ).decode('utf-8')
         media_path = xbmc.translatePath( os.path.join( resources_path, 'media' ) ).decode('utf-8')
         open_curtain_path = xbmc.translatePath( os.path.join( media_path, 'OpenSequence.mp4' ) ).decode('utf-8')
@@ -1248,7 +1249,6 @@ if success:
                 if addon.getSetting("tmdb_source") == '0':source='popular'
                 if addon.getSetting("tmdb_source") == '1':source='top_rated'
                 if addon.getSetting("tmdb_source") == '2':source='upcoming'
-                if addon.getSetting("tmdb_source") == '3':source='now_playing'
                 if addon.getSetting("tmdb_source") == '4':source='dvd'
                 if addon.getSetting("tmdb_source") == '5':source='all'
             elif choice=='none':
@@ -1691,10 +1691,38 @@ if success:
                         strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']+'&imdb_id='+str(trailer['imdbid'])
                     else:
                         strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']
-                    try:
-                        xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato.encode("utf-8")+')')
-                    except:
-                        xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
+                    pathadd=addon_path.replace('\\script.cine.annonce-master','')
+                    pathadd=os.path.join(pathadd,'XBMC-CouchPotato-Manager-master')
+                    pathadd=os.path.join(pathadd,'addon.py')
+                    if os.path.isfile(xpathadd):
+                      
+                        try:
+                            xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato.encode("utf-8")+')')
+                        except:
+                            xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
+                    else:
+                        if not wantedpath:
+                            xbmcgui.Dialog().notification(u'Répertoire manquant pour wanted list', u'Vous devez spécifiez un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
+                        else:
+                            alreadywanted=[]
+                            try:
+                                title=trailer['title'].decode('utf-8')
+                            except:
+                                title=trailer['title']
+                            if os.path.isfile(wantedpath+'\WANTEDMOVIE.txt'):
+                                LF=open(wantedpath+'\WANTEDMOVIE.txt', 'r')
+                                for line in LF:
+                                    alreadywanted.append(line.replace('\n','').decode('utf-8'))
+                                LF.close()
+                            if title+u' - '+ unicode(trailer['year']) in alreadywanted:
+                                     xbmcgui.Dialog().notification(u'Déjà présent', title+u' est déjà présent dans votre wanted list', xbmcgui.NOTIFICATION_INFO, 5000)
+                            else:
+                                LF = open(wantedpath+'\WANTEDMOVIE.txt', 'a')
+                                strtowrite=title+u' - '+ unicode(trailer['year'])+ u'\n'
+                                strtowrite=strtowrite.encode('utf-8')
+                                LF.write(strtowrite)
+                                LF.close()
+                                xbmcgui.Dialog().notification(u'Film ajouté', title+u' ajouté dans votre wanted list', xbmcgui.NOTIFICATION_INFO, 5000)
                 
                 if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK or action == ACTION_STOP:
                     xbmc.Player().stop()
@@ -1862,10 +1890,38 @@ if success:
                         strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']+'&imdb_id='+str(trailer['imdbid'])
                     else:
                         strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']
-                    try:
-                        xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato.encode("utf-8")+')')
-                    except:
-                        xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
+                    pathadd=addon_path.replace('\\script.cine.annonce-master','')
+                    pathadd=os.path.join(pathadd,'XBMC-CouchPotato-Manager-master')
+                    pathadd=os.path.join(pathadd,'addon.py')
+                    if os.path.isfile(xpathadd):
+                      
+                        try:
+                            xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato.encode("utf-8")+')')
+                        except:
+                            xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
+                    else:
+                        if not wantedpath:
+                            xbmcgui.Dialog().notification(u'Répertoire manquant pour wanted list', u'Vous devez spécifiez un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
+                        else:
+                            alreadywanted=[]
+                            try:
+                                title=trailer['title'].decode('utf-8')
+                            except:
+                                title=trailer['title']
+                            if os.path.isfile(wantedpath+'\WANTEDMOVIE.txt'):
+                                LF=open(wantedpath+'\WANTEDMOVIE.txt', 'r')
+                                for line in LF:
+                                    alreadywanted.append(line.replace('\n','').decode('utf-8'))
+                                LF.close()
+                            if title+u' - '+ unicode(trailer['year']) in alreadywanted:
+                                     xbmcgui.Dialog().notification(u'Déjà présent', title+u' est déjà présent dans votre wanted list', xbmcgui.NOTIFICATION_INFO, 5000)
+                            else:
+                                LF = open(wantedpath+'\WANTEDMOVIE.txt', 'a')
+                                strtowrite=title+u' - '+ unicode(trailer['year'])+ u'\n'
+                                strtowrite=strtowrite.encode('utf-8')
+                                LF.write(strtowrite)
+                                LF.close()
+                                xbmcgui.Dialog().notification(u'Film ajouté', title+u' ajouté dans votre wanted list', xbmcgui.NOTIFICATION_INFO, 5000)
                     
                 if action == ACTION_I or action == ACTION_DOWN:
                     self.close()
@@ -2016,6 +2072,7 @@ if success:
         do_curtains = 'false'
         hide_info = addon.getSetting('hide_info_search')
         hide_title = addon.getSetting('hide_title_search')
+        wantedpath=hide_title = addon.getSetting('wanted_path')
         addon_path = addon.getAddonInfo('path')
         resources_path = xbmc.translatePath( os.path.join( addon_path, 'resources' ) ).decode('utf-8')
         media_path = xbmc.translatePath( os.path.join( resources_path, 'media' ) ).decode('utf-8')
@@ -2564,10 +2621,38 @@ if success:
                         strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']+'&imdb_id='+str(trailer['imdbid'])
                     else:
                         strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']
-                    try:
-                        xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato.encode("utf-8")+')')
-                    except:
-                        xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
+                    pathadd=addon_path.replace('\\script.cine.annonce-master','')
+                    pathadd=os.path.join(pathadd,'XBMC-CouchPotato-Manager-master')
+                    pathadd=os.path.join(pathadd,'addon.py')
+                    if os.path.isfile(xpathadd):
+                      
+                        try:
+                            xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato.encode("utf-8")+')')
+                        except:
+                            xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
+                    else:
+                        if not wantedpath:
+                            xbmcgui.Dialog().notification(u'Répertoire manquant pour wanted list', u'Vous devez spécifiez un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
+                        else:
+                            alreadywanted=[]
+                            try:
+                                title=trailer['title'].decode('utf-8')
+                            except:
+                                title=trailer['title']
+                            if os.path.isfile(wantedpath+'\WANTEDMOVIE.txt'):
+                                LF=open(wantedpath+'\WANTEDMOVIE.txt', 'r')
+                                for line in LF:
+                                    alreadywanted.append(line.replace('\n','').decode('utf-8'))
+                                LF.close()
+                            if title+u' - '+ unicode(trailer['year']) in alreadywanted:
+                                     xbmcgui.Dialog().notification(u'Déjà présent', title+u' est déjà présent dans votre wanted list', xbmcgui.NOTIFICATION_INFO, 5000)
+                            else:
+                                LF = open(wantedpath+'\WANTEDMOVIE.txt', 'a')
+                                strtowrite=title+u' - '+ unicode(trailer['year'])+ u'\n'
+                                strtowrite=strtowrite.encode('utf-8')
+                                LF.write(strtowrite)
+                                LF.close()
+                                xbmcgui.Dialog().notification(u'Film ajouté', title+u' ajouté dans votre wanted list', xbmcgui.NOTIFICATION_INFO, 5000)
                 
                 if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK or action==ACTION_STOP:
                     xbmc.Player().stop()
@@ -2735,10 +2820,38 @@ if success:
                         strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']+'&imdb_id='+str(trailer['imdbid'])
                     else:
                         strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']
-                    try:
-                        xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato.encode("utf-8")+')')
-                    except:
-                        xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
+                    pathadd=addon_path.replace('\\script.cine.annonce-master','')
+                    pathadd=os.path.join(pathadd,'XBMC-CouchPotato-Manager-master')
+                    pathadd=os.path.join(pathadd,'addon.py')
+                    if os.path.isfile(xpathadd):
+                      
+                        try:
+                            xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato.encode("utf-8")+')')
+                        except:
+                            xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
+                    else:
+                        if not wantedpath:
+                            xbmcgui.Dialog().notification(u'Répertoire manquant pour wanted list', u'Vous devez spécifiez un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
+                        else:
+                            alreadywanted=[]
+                            try:
+                                title=trailer['title'].decode('utf-8')
+                            except:
+                                title=trailer['title']
+                            if os.path.isfile(wantedpath+'\WANTEDMOVIE.txt'):
+                                LF=open(wantedpath+'\WANTEDMOVIE.txt', 'r')
+                                for line in LF:
+                                    alreadywanted.append(line.replace('\n','').decode('utf-8'))
+                                LF.close()
+                            if title+u' - '+ unicode(trailer['year']) in alreadywanted:
+                                     xbmcgui.Dialog().notification(u'Déjà présent', title+u' est déjà présent dans votre wanted list', xbmcgui.NOTIFICATION_INFO, 5000)
+                            else:
+                                LF = open(wantedpath+'\WANTEDMOVIE.txt', 'a')
+                                strtowrite=title+u' - '+ unicode(trailer['year'])+ u'\n'
+                                strtowrite=strtowrite.encode('utf-8')
+                                LF.write(strtowrite)
+                                LF.close()
+                                xbmcgui.Dialog().notification(u'Film ajouté', title+u' ajouté dans votre wanted list', xbmcgui.NOTIFICATION_INFO, 5000)
                     
                 if action == ACTION_I or action == ACTION_DOWN:
                     self.close()

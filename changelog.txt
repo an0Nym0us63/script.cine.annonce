@@ -1,3 +1,5 @@
+[B]1.1.5[/B]
+- Permettre le rajout de wanted liste meme si pas de plugin couchpotato
 [B]1.1.4[/B]
 - Amelioration du rajout d'un film directement dans couchpotato (plugin couchmanager version sarakha necessaire)
 [B]1.1.3[/B]
