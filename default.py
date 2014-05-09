@@ -1627,10 +1627,14 @@ if success:
                 except:
                     NUMBER_TRAILERS = 0
                     self.close()
-                if trailer['trailer'] in ['tmdb']:
-                    trailer=getTmdbTrailer(trailer['id'])
-                else:
-                    trailer=getTmdbTrailer(trailer['id'],trailer['trailer'])
+                try:
+                    if trailer['trailer'] in ['tmdb']:
+                        trailer=getTmdbTrailer(trailer['id'])
+                    else:
+                        trailer=getTmdbTrailer(trailer['id'],trailer['trailer'])
+                except:
+                    del trailers[0]
+                    self.close()
                 del trailers[0]
                 source=trailer['source']
                                
