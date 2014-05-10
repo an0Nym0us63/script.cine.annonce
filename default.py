@@ -25,14 +25,14 @@ class blankWindow(xbmcgui.WindowXML):
 
 def selectchoice():
     success = False  
-    Choice = ['Proposition de films','Voir mes bandes annonces', 'Suggestions','Rechercher un film']
+    Choice = ['Proposition de films','Voir mes bandes annonces', 'Suggestions','Rechercher un film','Gestion des bandes-annonces']
     selectedchoice = xbmcgui.Dialog().select(u"Que voulez vous faire ?", Choice)
     if not selectedchoice == -1:
         selectedchoice = Choice[selectedchoice]
         if selectedchoice == 'Proposition de films':
             selectedchoice = 1
             success = True
-        elif selectedchoice == 'Voir mes bandes annonces':
+        elif selectedchoice == 'Voir mes bandes-annonces':
             selectedchoice = 2
             success = True
         elif selectedchoice == 'Suggestions':
@@ -40,6 +40,9 @@ def selectchoice():
             success = True
         elif selectedchoice == 'Rechercher un film':
             selectedchoice=4
+            success = True
+        elif selectedchoice == 'Gestion des bandes-annonces':
+            selectedchoice=5
             success = True
         else:
             success = False
@@ -3033,3 +3036,46 @@ if success:
                     
         else:
             xbmc.log('Random Trailers: ' + 'Exiting Random Trailers Screen Saver Something is playing!!!!!!')
+    
+    elif choix==5:
+        import xbmc
+        import xbmcgui
+        import sys
+        import os
+        import random
+        import simplejson
+        import time
+        import datetime
+        import xbmcaddon
+        from datetime import date
+        addon = xbmcaddon.Addon()
+        addon_path = addon.getAddonInfo('path')
+        
+        def getlibrary():
+            moviestring = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "properties": ["title","file", "year","trailer","set"]}, "id": 1}')
+            moviestring = unicode(moviestring, 'utf-8', errors='ignore')                                                            
+            movies = simplejson.loads(moviestring)
+            return movies
+        dp=xbmcgui.DialogProgress()
+        dp.create('Scan','','','En cours')
+        notrailer=[]
+        onlinetrailer=[]
+        notrailertitle=[]
+        onlinetrailertitle=[]    
+        movies=getlibrary()
+        totlen=len(movies["result"]["movies"])
+        for movie in movies["result"]["movies"]:
+                if movie["trailer"] == '' and not 'dessin' in movie["set"].lower():
+                    notrailer.append(movie)
+                    notrailertitle.append(movie["title"])
+                elif 'youtube' in movie["trailer"]  and not 'dessin' in movie["set"].lower():
+                    onlinetrailer.append(movie)
+                    onlinetrailertitle.append(movie["title"])
+        dp.close()
+        resultats=[str(len(onlinetrailer))+" films avec bandes annonces en lignes",str(len(notrailer))+" films sans bandes annonces"]
+        selectChoice = xbmcgui.Dialog().select(u"Résultats de recherche "+str(totlen)+" films", resultats)
+        if selectChoice==0:
+            selectChoice = xbmcgui.Dialog().select(u"Résultats de recherche "+str(totlen)+" films", onlinetrailertitle)
+        elif selectChoice==1:
+            selectChoice = xbmcgui.Dialog().select(u"Résultats de recherche "+str(totlen)+" films", notrailertitle)
+        
