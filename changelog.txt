@@ -1,4 +1,7 @@
-[B]1.1.6/B]
+[B]1.1.7[/B]
+- Rajout d'un visionneur de wanted list (sera surement editable a l'avenir (suppression surtout)
+- Rajout du compteur BA local
+[B]1.1.6[/B]
 - Rajout de la categorie gestion bandes annonces (permet juste de voir le decompte pour le moment)
 [B]1.1.5[/B]
 - Permettre le rajout de wanted liste meme si pas de plugin couchpotato

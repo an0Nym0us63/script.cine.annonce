@@ -25,7 +25,7 @@ class blankWindow(xbmcgui.WindowXML):
 
 def selectchoice():
     success = False  
-    Choice = ['Proposition de films','Voir mes bandes annonces', 'Suggestions','Rechercher un film','Gestion des bandes-annonces']
+    Choice = ['Proposition de films','Voir mes bandes annonces', 'Suggestions','Rechercher un film','Gestion des bandes-annonces','Consulter sa wanted list']
     selectedchoice = xbmcgui.Dialog().select(u"Que voulez vous faire ?", Choice)
     if not selectedchoice == -1:
         selectedchoice = Choice[selectedchoice]
@@ -43,6 +43,9 @@ def selectchoice():
             success = True
         elif selectedchoice == 'Gestion des bandes-annonces':
             selectedchoice=5
+            success = True
+        elif selectedchoice == 'Consulter sa wanted list':
+            selectedchoice=6
             success = True
         else:
             success = False
@@ -3061,21 +3064,61 @@ if success:
         notrailer=[]
         onlinetrailer=[]
         notrailertitle=[]
-        onlinetrailertitle=[]    
+        onlinetrailertitle=[]
+        gottrailer=[]
+        gottrailertitle=[] 
         movies=getlibrary()
         totlen=len(movies["result"]["movies"])
         for movie in movies["result"]["movies"]:
-                if movie["trailer"] == '' and not 'dessin' in movie["set"].lower():
+                if movie["trailer"] == '' and not 'dessins animes' in movie["set"].lower():
                     notrailer.append(movie)
                     notrailertitle.append(movie["title"])
-                elif 'youtube' in movie["trailer"]  and not 'dessin' in movie["set"].lower():
+                elif '-trailer.' in movie["trailer"]  and not 'dessins animes' in movie["set"].lower():
+                    gottrailer.append(movie)
+                    gottrailertitle.append(movie["title"])
+                else:
                     onlinetrailer.append(movie)
                     onlinetrailertitle.append(movie["title"])
         dp.close()
-        resultats=[str(len(onlinetrailer))+" films avec bandes annonces en lignes",str(len(notrailer))+" films sans bandes annonces"]
+        resultats=[str(len(gottrailer))+" films avec bandes annonces en local",str(len(onlinetrailer))+" films avec bandes annonces en lignes",str(len(notrailer))+" films sans bandes annonces"]
         selectChoice = xbmcgui.Dialog().select(u"Résultats de recherche "+str(totlen)+" films", resultats)
         if selectChoice==0:
-            selectChoice = xbmcgui.Dialog().select(u"Résultats de recherche "+str(totlen)+" films", onlinetrailertitle)
+            selectChoice = xbmcgui.Dialog().select(str(gottrailertitle)+" films avec bandes annonces locales", gottrailertitle)
         elif selectChoice==1:
-            selectChoice = xbmcgui.Dialog().select(u"Résultats de recherche "+str(totlen)+" films", notrailertitle)
+            selectChoice = xbmcgui.Dialog().select(str(onlinetrailertitle)+" films avec bandes annonces en ligne", onlinetrailertitle)
+        elif selectChoice==2:
+            selectChoice = xbmcgui.Dialog().select(str(notrailertitle)+" films sans bandes annonces", notrailertitle)
+            
+    elif choix==6:
+        import xbmc
+        import xbmcgui
+        import sys
+        import os
+        import random
+        import simplejson
+        import time
+        import datetime
+        import xbmcaddon
+        from datetime import date
+        addon = xbmcaddon.Addon()
+        addon_path = addon.getAddonInfo('path')
+        wantedpath=addon.getSetting('wanted_path')
+        if not wantedpath:
+            xbmcgui.Dialog().notification(u'Répertoire manquant pour wanted list', u'Vous devez spécifiez un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
+        else:
+            alreadywanted=[]
+            if os.path.isfile(wantedpath+'\WANTEDMOVIE.txt'):
+                LF=open(wantedpath+'\WANTEDMOVIE.txt', 'r')
+                for line in LF:
+                    try:
+                        alreadywanted.append(line.replace('\n','').decode('utf-8'))
+                    except:
+                        alreadywanted.append(line.replace('\n','').decode('latin-1'))
+                LF.close()
+            lenwanted=len(alreadywanted)
+            if lenwanted==0:
+                xbmcgui.Dialog().notification(u'Aucun film dans votre wanted list', u'Pensez à rajouter des films', xbmcgui.NOTIFICATION_INFO, 5000)
+            else:
+                selectChoice = xbmcgui.Dialog().select(str(lenwanted)+" films dans votre wanted list", alreadywanted)        
+        
         
