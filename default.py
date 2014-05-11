@@ -3201,7 +3201,7 @@ while sortie==False:
                             if trailerfound<>'':
                                 if smb:
                                     trailerfound='smb:'+trailerfound
-                                trailerfound=trailerfound.replace('/','\\\\')
+                                trailerfound=trailerfound.replace('\\','\\\\')
                                 xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (movie['movieid'],trailerfound) )
                     dp.close()
                 else:
