@@ -4,7 +4,7 @@ import xbmcaddon
 addon = xbmcaddon.Addon()
 addon_path = addon.getAddonInfo('path')
 
-REMOTE_DBG = True
+REMOTE_DBG = False
 
 # append pydev remote debugger
 if REMOTE_DBG:
