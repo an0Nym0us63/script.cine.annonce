@@ -1037,6 +1037,7 @@ while sortie==False:
                 bs.show()
                 global exit_requested
                 global movie_file
+                global sortie
                 movie_file = ''
                 exit_requested = False
                 player = XBMCPlayer()
@@ -1071,6 +1072,7 @@ while sortie==False:
                     exit_requested=True
                 
                 if not movie_file == '':
+                    sortie=True
                     xbmc.Player(0).play(movie_file)
                 
             
