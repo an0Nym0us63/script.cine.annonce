@@ -4,7 +4,7 @@ import xbmcaddon
 addon = xbmcaddon.Addon()
 addon_path = addon.getAddonInfo('path')
 
-REMOTE_DBG = False
+REMOTE_DBG = True
 
 # append pydev remote debugger
 if REMOTE_DBG:
@@ -25,7 +25,7 @@ class blankWindow(xbmcgui.WindowXML):
 
 def selectchoice():
     success = False  
-    Choice = ['Proposition de films','Voir mes bandes annonces', 'Suggestions','Rechercher un film','Gestion des bandes-annonces','Consulter sa wanted list']
+    Choice = ['Proposition de films','Voir mes bandes-annonces', 'Suggestions','Rechercher un film','Gestion des bandes-annonces','Consulter sa wanted list']
     selectedchoice = xbmcgui.Dialog().select(u"Que voulez vous faire ?", Choice)
     if not selectedchoice == -1:
         selectedchoice = Choice[selectedchoice]
@@ -649,7 +649,6 @@ if success:
         do_year = addon.getSetting('do_year')
         do_genre = addon.getSetting('do_genre')
         do_last = addon.getSetting('do_last')
-        do_mute = addon.getSetting('do_mute')
         hide_info = addon.getSetting('hide_info')
         addon_path = addon.getAddonInfo('path')
         hide_watched = addon.getSetting('hide_watched')
