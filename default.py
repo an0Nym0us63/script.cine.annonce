@@ -25,26 +25,26 @@ class blankWindow(xbmcgui.WindowXML):
 
 def selectchoice():
     success = False  
-    Choice = ['Proposition de films','Voir mes bandes-annonces', 'Suggestions','Rechercher un film','Gestion des bandes-annonces','Consulter sa wanted list','Quitter']
+    Choice = ['1 - Proposition de films','2 - Voir mes bandes-annonces', '3 - Suggestions','4 - Rechercher un film','5 - Gestion des bandes-annonces','6 - Consulter sa wanted list','7 - Quitter']
     selectedchoice = xbmcgui.Dialog().select(u"Que voulez vous faire ?", Choice)
     if not selectedchoice == -1:
         selectedchoice = Choice[selectedchoice]
-        if selectedchoice == 'Proposition de films':
+        if selectedchoice == '1 - Proposition de films':
             selectedchoice = 1
             success = True
-        elif selectedchoice == 'Voir mes bandes-annonces':
+        elif selectedchoice == '2 - Voir mes bandes-annonces':
             selectedchoice = 2
             success = True
-        elif selectedchoice == 'Suggestions':
+        elif selectedchoice == '3 - Suggestions':
             selectedchoice = 3
             success = True
-        elif selectedchoice == 'Rechercher un film':
+        elif selectedchoice == '4 - Rechercher un film':
             selectedchoice=4
             success = True
-        elif selectedchoice == 'Gestion des bandes-annonces':
+        elif selectedchoice == '5 - Gestion des bandes-annonces':
             selectedchoice=5
             success = True
-        elif selectedchoice == 'Consulter sa wanted list':
+        elif selectedchoice == '6 - Consulter sa wanted list':
             selectedchoice=6
             success = True
         else:
