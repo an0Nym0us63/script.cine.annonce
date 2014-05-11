@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.cine_annonces"
        name="Cine annonces"
-       version="1.1.7"
+       version="1.1.8"
        provider-name="sarakha63">
   <requires>
     <import addon="xbmc.python"					version="2.1.0"/>
@@ -16,18 +16,18 @@
     <platform>all</platform>
     <summary lang="en">La boite à outils des bandes annonces</summary>
     <description lang="en">
-	Permet de choisir 5 options. 
-	La première vous proposera des bandes annonces de films que vous avez selon des critères que vous choisissez et vous laissera choisir ou choisira le film à lancer.
-	La deuxième permet de voir un certains nombres de bandes annonces de films que vous possédez selon des critères.
-	La troisième vous proposera des bandes annonces de films (a l'affiche, populaire, sorties DVD etc...)
-	La quatrième permet de rechercher un film et voir sa bande annonce
-	La cinquième permet de gérer ses bandes annonces.
-	
-	Touches:
-	Pendant une bande annonce des modes 3 et 4 appuyer sur Q permet de rajouter le film dans une wanted liste ou de le rajouter
-	directement dans couchpotato
-	Un appui sur fleche droite passera à la bande annonce suivante
-	Un appui sur retour ou x (stop) permet de quitter le script
+		Permet de choisir 5 options.
+		La première vous proposera des bandes annonces de films que vous avez selon des critères que vous choisissez et vous laissera choisir ou choisira le film à lancer.
+		La deuxième permet de voir un certains nombres de bandes annonces de films que vous possédez selon des critères.
+		La troisième vous proposera des bandes annonces de films (a l'affiche, populaire, sorties DVD etc...)
+		La quatrième permet de rechercher un film et voir sa bande annonce
+		La cinquième permet de gérer ses bandes annonces.
+		
+		Touches:
+		Pendant une bande annonce des modes 3 et 4 appuyer sur Q permet de rajouter le film dans une wanted liste ou de le rajouter
+		directement dans couchpotato
+		Un appui sur fleche droite passera à la bande annonce suivante
+		Un appui sur retour ou x (stop) permet de quitter le script
 	</description>
 	<license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 	<forum></forum>

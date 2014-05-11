@@ -1,3 +1,8 @@
+[B]1.1.8[/B]
+- La section gestion de bandes annonces permet :
+	De voir ses bandes annonces
+	De telecharger ses bandes annonces non locales (uniquement allocine pour l'instant)
+	De mettre a jour la BDD pour les nouvelles bandes annonces recuperees ou si un fichier local est detecte (film par film pour le moment)
 [B]1.1.7[/B]
 - Rajout d'un visionneur de wanted list (sera surement editable a l'avenir (suppression surtout)
 - Rajout du compteur BA local
@@ -15,7 +20,7 @@
 [B]1.1.2[/B]
 - Correction si voir BA est non dans mode 1
 [B]1.1.1[/B]
-- Amelioration detection VO 
+- Amelioration detection VO
 [B]1.1.0[/B]
 - Rajout de la recherche a venir et a l'affiche en se basant sur allocine
 - rajout d'une section recherche de film pour voir la bande annonce d'un film en le recherchant
