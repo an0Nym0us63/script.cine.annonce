@@ -52,9 +52,9 @@ def selectchoice():
     return success, selectedchoice
 
 sortie= False
+bs = blankWindow('script-BlankWindow.xml', addon_path,'default',)
+bs.show()
 while sortie==False:
-    bs = blankWindow('script-BlankWindow.xml', addon_path,'default',)
-    bs.show()
     success, choix = selectchoice()
     if success:
         if choix==1:
@@ -636,7 +636,7 @@ while sortie==False:
                 randomMovie = random.choice(filteredMovies)
                 sortie=True
                 xbmc.executebuiltin('Playmedia(' + randomMovie["file"].encode('utf-8') + ')')
-            del bs
+            
         elif choix==2:
             import xbmc
             import xbmcgui
@@ -1072,7 +1072,7 @@ while sortie==False:
                 
                 if not movie_file == '':
                     xbmc.Player(0).play(movie_file)
-                del bs
+                
             
             filtergenre = False
             filteryear = False
@@ -2044,7 +2044,7 @@ while sortie==False:
                 dp.close()
                 if len(trailers) > 0 and not exit_requested:
                     playTrailers()
-                del bs
+                
                         
             else:
                 xbmc.log('Random Trailers: ' + 'Exiting Random Trailers Screen Saver Something is playing!!!!!!')
@@ -3033,7 +3033,7 @@ while sortie==False:
                 dp.close()
                 if len(trailers) > 0 and not exit_requested:
                     playTrailers()
-                del bs
+                
                         
             else:
                 xbmc.log('Random Trailers: ' + 'Exiting Random Trailers Screen Saver Something is playing!!!!!!')
