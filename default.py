@@ -3048,68 +3048,126 @@ if success:
         catcher=trailercatcher()
         addon = xbmcaddon.Addon()
         addon_path = addon.getAddonInfo('path')
-        
+                       
         def getlibrary():
             moviestring = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "properties": ["title","file", "year","trailer","set"]}, "id": 1}')
             moviestring = unicode(moviestring, 'utf-8', errors='ignore')                                                            
             movies = simplejson.loads(moviestring)
             return movies
-        dp=xbmcgui.DialogProgress()
-        dp.create('Scan','','','En cours')
-        notrailer=[]
-        onlinetrailer=[]
-        notrailertitle=[]
-        onlinetrailertitle=[]
-        gottrailer=[]
-        gottrailertitle=[] 
-        movies=getlibrary()
-        totlen=len(movies["result"]["movies"])
-        for movie in movies["result"]["movies"]:
-                if movie["trailer"] == '' and not 'dessins animes' in movie["set"].lower():
-                    notrailer.append(movie)
-                    notrailertitle.append(movie["title"])
-                elif '-trailer.' in movie["trailer"]  and not 'dessins animes' in movie["set"].lower():
-                    gottrailer.append(movie)
-                    gottrailertitle.append(movie["title"])
-                elif not 'dessins animes' in movie["set"].lower():
-                    onlinetrailer.append(movie)
-                    onlinetrailertitle.append(movie["title"])
-        dp.close()
-        resultats=[str(len(gottrailer))+" films avec bandes annonces en local",str(len(onlinetrailer))+" films avec bandes annonces en lignes",str(len(notrailer))+" films sans bandes annonces"]
-        selectChoice = xbmcgui.Dialog().select(u"Résultats de recherche "+str(totlen)+" films", resultats)
-        if selectChoice==0:
-            selectChoice = xbmcgui.Dialog().select(str(len(gottrailertitle))+" films avec bandes annonces locales", gottrailertitle)
-            if selectChoice>=0:
-                xbmc.Player().play(gottrailer[selectChoice]["trailer"])
-                while xbmc.Player().isPlaying():                
-                    xbmc.sleep(250)
-        elif selectChoice==1:
-            selectChoice = xbmcgui.Dialog().select(str(len(onlinetrailertitle))+" films avec bandes annonces en ligne", onlinetrailertitle)
-            if selectChoice>=0:
-                file=onlinetrailer[selectChoice]['file']
-                smb=False
-                if 'smb:' in file:
-                    moviefolder=file[:file.rfind("/")].replace('smb:','')
-                    smb=True
-                path=catcher.trailersearch(moviefolder)
-                if path:
-                    if smb:
-                        path='smb:'+path
-                    xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (onlinetrailer[selectChoice]['movieid'],path.encode('utf-8')) )
-                
-        elif selectChoice==2:
-            if selectChoice>=0:
-                selectChoice = xbmcgui.Dialog().select(str(len(notrailertitle))+" films sans bandes annonces", notrailertitle)
-                file=notrailer[selectChoice]['file']
-                smb=False
-                if 'smb:' in file:
-                    moviefolder=file[:file.rfind("/")].replace('smb:','')
-                    smb=True
-                path=catcher.trailersearch(moviefolder)
-                if path:
-                    if smb:
-                        path='smb:'+path
-                    xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (notrailer[selectChoice]['movieid'],path.encode('utf-8')) )
+        sortiecinq=False
+        while sortie==False:
+            dp=xbmcgui.DialogProgress()
+            dp.create('Scan','','','En cours')
+            notrailer=[]
+            onlinetrailer=[]
+            notrailertitle=[]
+            onlinetrailertitle=[]
+            gottrailer=[]
+            gottrailertitle=[] 
+            movies=getlibrary()
+            totlen=len(movies["result"]["movies"])
+            for movie in movies["result"]["movies"]:
+                    if movie["trailer"] == '' and not 'dessins animes' in movie["set"].lower():
+                        notrailer.append(movie)
+                        notrailertitle.append(movie["title"])
+                    elif '-trailer.' in movie["trailer"]  and not 'dessins animes' in movie["set"].lower():
+                        gottrailer.append(movie)
+                        gottrailertitle.append(movie["title"])
+                    elif not 'dessins animes' in movie["set"].lower():
+                        onlinetrailer.append(movie)
+                        onlinetrailertitle.append(movie["title"])
+            dp.close()
+            resultats=[str(len(gottrailer))+" films avec bandes annonces en local",str(len(onlinetrailer))+" films avec bandes annonces en lignes",str(len(notrailer))+" films sans bandes annonces",u'Rafraichir la base de données','Sortir']
+            
+            selectChoice = xbmcgui.Dialog().select(u"Résultats de recherche "+str(totlen)+" films", resultats)
+            if selectChoice==0:
+                selectChoice = xbmcgui.Dialog().select(str(len(gottrailertitle))+" films avec bandes annonces locales", gottrailertitle)
+                if selectChoice>=0:
+                    xbmc.Player().play(gottrailer[selectChoice]["trailer"])
+                    while xbmc.Player().isPlaying():                
+                        xbmc.sleep(250)
+            elif selectChoice==1:
+                selectChoice = xbmcgui.Dialog().select(str(len(onlinetrailertitle))+" films avec bandes annonces en ligne", onlinetrailertitle)
+                if selectChoice>=0:
+                    file=onlinetrailer[selectChoice]['file']
+                    smb=False
+                    if 'smb:' in file:
+                        moviefolder=file[:file.rfind("/")].replace('smb:','')
+                        smb=True
+                    else:
+                        moviefolder=file[:file.rfind("/")]
+                    path=catcher.trailersearch(moviefolder)
+                    if path:
+                        if smb:
+                            path='smb:'+path
+                        xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (onlinetrailer[selectChoice]['movieid'],path.encode('utf-8')) )
+                    xbmc.Player().play(path)
+                    while xbmc.Player().isPlaying():                
+                        xbmc.sleep(250)
+            elif selectChoice==2:
+                if selectChoice>=0:
+                    selectChoice = xbmcgui.Dialog().select(str(len(notrailertitle))+" films sans bandes annonces", notrailertitle)
+                    file=notrailer[selectChoice]['file']
+                    smb=False
+                    if 'smb:' in file:
+                        moviefolder=file[:file.rfind("/")].replace('smb:','')
+                        smb=True
+                    else:
+                        moviefolder=file[:file.rfind("/")]
+                    path=catcher.trailersearch(moviefolder)
+                    if path:
+                        if smb:
+                            path='smb:'+path
+                        xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (notrailer[selectChoice]['movieid'],path.encode('utf-8')) )
+                    xbmc.Player().play(path)
+                    while xbmc.Player().isPlaying():                
+                        xbmc.sleep(250)
+            elif selectChoice==3:
+                dp.create(u'Mise à jour','','','En cours')
+                for movie in movies["result"]["movies"]:
+                    if movie["trailer"] == '' and not 'dessins animes' in movie["set"].lower():
+                        smb=False
+                        if 'smb:' in movie['file']:
+                            filename=movie['file'].replace('smb:','')+'trailer.'
+                            smb=True
+                        else:
+                            filename=movie['file']+'-trailer.'
+                        trailerfound=''
+                        for ext in ['mp4','avi','mkv','flv']:
+                            if os.path.isfile(filename+ext):
+                                trailerfound=filename+ext
+                        if trailerfound<>'':
+                            if smb:
+                                trailerfound='smb:'+trailerfound
+                            xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (movie['movieid'],trailerfound) )
+                    
+                    elif '-trailer.' in movie["trailer"]  and not 'dessins animes' in movie["set"].lower():
+                        smb=False
+                        if 'smb:' in movie["trailer"]:
+                            trailer=movie["trailer"].replace('smb:','')
+                            smb=True
+                        else:
+                            trailer=movie["trailer"]
+                        if not os.path.isfile(trailer):
+                            xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (movie['movieid'],'') )
+                    elif not 'dessins animes' in movie["set"].lower():
+                        smb=False
+                        if 'smb:' in movie['file']:
+                            filename=movie['file'].replace('smb:','')+'trailer.'
+                            smb=True
+                        else:
+                            filename=movie['file']+'-trailer.'
+                        trailerfound=''
+                        for ext in ['mp4','avi','mkv','flv']:
+                            if os.path.isfile(filename+ext):
+                                trailerfound=filename+ext
+                        if trailerfound<>'':
+                            if smb:
+                                trailerfound='smb:'+trailerfound
+                            xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (movie['movieid'],trailerfound) )
+                dp.close()
+            elif selectChoice==4:
+                sortiecinq=True                  
                 
     elif choix==6:
         import xbmc

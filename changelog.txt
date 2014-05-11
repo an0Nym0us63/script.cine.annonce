@@ -1,3 +1,7 @@
+[B]1.1.9[/B]
+- Rajout de recherche google
+- Rajout de rafraichissement de base de donnee pour voir si une bande annonce a ete rajoutee ou supprimee
+- Rajout s'un retour menu dans le mode 5
 [B]1.1.8[/B]
 - La section gestion de bandes annonces permet :
 	De voir ses bandes annonces
