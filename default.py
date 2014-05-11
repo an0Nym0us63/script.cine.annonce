@@ -2976,8 +2976,8 @@ while sortie==False:
                         selectChoice = xbmcgui.Dialog().select(u"Résultats de recherche", titres)
                         if selectChoice<>-1:
                             titrefull=titres[selectChoice]
-                            titre=titrefull[:titrefull.find('-')-1]
-                            year=titrefull[titrefull.find('-')+2:]
+                            titre=titrefull[:titrefull.rfind('-')-1]
+                            year=titrefull[titrefull.rfind('-')+2:]
                             ficheresult={}
                             for item in resultat:
                                 if item['titre']==titre and item['annee']==int(year):
