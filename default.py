@@ -1039,10 +1039,7 @@ if success:
             DO_CURTIANS = addon.getSetting('do_animation')
             DO_EXIT = addon.getSetting('do_exit')
             NUMBER_TRAILERS =  int(addon.getSetting('number_trailers'))
-            if do_mute == 'true':
-                muted = xbmc.getCondVisibility("Player.Muted")
-                if not muted:
-                    xbmc.executebuiltin('xbmc.Mute()')
+            
             if DO_CURTIANS == 'true':
                 player.play(open_curtain_path)
                 while player.isPlaying():
@@ -1067,10 +1064,7 @@ if success:
                         while player.isPlaying():
                             xbmc.sleep(250)
                 exit_requested=True
-            if do_mute == 'true':
-                muted = xbmc.getCondVisibility("Player.Muted")
-                if muted:
-                    xbmc.executebuiltin('xbmc.Mute()')
+            
             if not movie_file == '':
                 xbmc.Player(0).play(movie_file)
             del bs
