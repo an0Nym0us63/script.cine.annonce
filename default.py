@@ -3142,11 +3142,12 @@ while sortie==False:
                                     moviefolder=file[:file.rfind("/")].replace('smb:','')
                                     smb=True
                                 else:
-                                    moviefolder=file[:file.rfind("/")]
+                                    moviefolder=file[:file.rfind("\\")]
                                 path=catcher.trailersearch(moviefolder)
                                 if path:
                                     if smb:
                                         path='smb:'+path
+                                    print path
                                     xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (notrailer[selectChoice]['movieid'],path.encode('utf-8')) )
                                 xbmc.Player().play(path)
                                 sortiecinqdeux=True
