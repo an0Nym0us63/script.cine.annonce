@@ -1,3 +1,6 @@
+[B]1.2.0[/B]
+- Refonte des menus (pour eviter le sorties brutales)
+- Rajout de la possibilite de supprimer un film de sa wanted list
 [B]1.1.9[/B]
 - Rajout de recherche google
 - Rajout de rafraichissement de base de donnee pour voir si une bande annonce a ete rajoutee ou supprimee
