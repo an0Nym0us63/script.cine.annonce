@@ -3123,6 +3123,7 @@ while sortie==False:
                                         path='smb:'+path
                                     xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (onlinetrailer[selectChoice]['movieid'],path.encode('utf-8')) )
                                 xbmc.Player().play(path)
+                                sortiecinqun=True
                                 while xbmc.Player().isPlaying():                
                                     xbmc.sleep(250)
                         else:
@@ -3148,6 +3149,7 @@ while sortie==False:
                                         path='smb:'+path
                                     xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (notrailer[selectChoice]['movieid'],path.encode('utf-8')) )
                                 xbmc.Player().play(path)
+                                sortiecinqdeux=True
                                 while xbmc.Player().isPlaying():                
                                     xbmc.sleep(250)
                         else:
