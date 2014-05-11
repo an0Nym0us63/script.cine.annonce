@@ -3055,7 +3055,7 @@ if success:
             movies = simplejson.loads(moviestring)
             return movies
         sortiecinq=False
-        while sortie==False:
+        while sortiecinq==False:
             dp=xbmcgui.DialogProgress()
             dp.create('Scan','','','En cours')
             notrailer=[]
