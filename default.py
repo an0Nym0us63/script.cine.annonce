@@ -4,7 +4,7 @@ import xbmcaddon
 addon = xbmcaddon.Addon()
 addon_path = addon.getAddonInfo('path')
 
-REMOTE_DBG = False
+REMOTE_DBG = True
 
 # append pydev remote debugger
 if REMOTE_DBG:
@@ -2956,7 +2956,7 @@ while sortie==False:
                                     rows = soup.findAll("a")
                                     hasba=0
                                     for lien in rows:
-                                        if 'annonce' in str(lien):
+                                        if 'annonce' in str(lien).lower():
                                             hasba=1
                                             break
                                     if hasba==0:
