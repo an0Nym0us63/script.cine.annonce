@@ -423,7 +423,7 @@ class trailercatcher(object):
             self.logg('Aucun film sans bande annonce trouve')
             xbmcgui.Dialog().notification(u'Le film possède une bande annonce', u'Je rafraichis la base de données avec', xbmcgui.NOTIFICATION_INFO, 5000)
             os.path.join(moviefolder,trailerfound)
-            return os.path.join(moviefolder,trailerfound).replace('\\','/')
+            return moviefolder+'/'+trailerfound
               
         for movie in fichier:
             trailerpath=movie[0]

@@ -3116,7 +3116,7 @@ while sortie==False:
                                     moviefolder=file[:file.rfind("/")].replace('smb:','')
                                     smb=True
                                 else:
-                                    moviefolder=file[:file.rfind("/")]
+                                    moviefolder=file[:file.rfind("\\")]
                                 path=catcher.trailersearch(moviefolder)
                                 if path:
                                     if smb:
@@ -3147,7 +3147,6 @@ while sortie==False:
                                 if path:
                                     if smb:
                                         path='smb:'+path
-                                    print path
                                     xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (notrailer[selectChoice]['movieid'],path.encode('utf-8')) )
                                 xbmc.Player().play(path)
                                 sortiecinqdeux=True
@@ -3161,10 +3160,10 @@ while sortie==False:
                         if movie["trailer"] == '' and not 'dessins animes' in movie["set"].lower():
                             smb=False
                             if 'smb:' in movie['file']:
-                                filename=movie['file'].replace('smb:','')+'trailer.'
+                                filename=movie['file'].replace('smb:','')[:-4]+'-trailer.'
                                 smb=True
                             else:
-                                filename=movie['file']+'-trailer.'
+                                filename=movie['file'][:-4]+'-trailer.'
                             trailerfound=''
                             for ext in ['mp4','avi','mkv','flv']:
                                 if os.path.isfile(filename+ext):
