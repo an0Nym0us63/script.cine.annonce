@@ -3202,6 +3202,7 @@ while sortie==False:
                                 if smb:
                                     trailerfound='smb:'+trailerfound
                                 trailerfound=trailerfound.replace('\\','\\\\')
+                                trailerfound=trailerfound.encode("utf-8")
                                 xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (movie['movieid'],trailerfound) )
                         
                         elif '-trailer.' in movie["trailer"]  and not 'dessins animes' in movie["set"].lower():
@@ -3228,6 +3229,7 @@ while sortie==False:
                                 if smb:
                                     trailerfound='smb:'+trailerfound
                                 trailerfound=trailerfound.replace('\\','\\\\')
+                                trailerfound=trailerfound.encode("utf-8")
                                 xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (movie['movieid'],trailerfound) )
                     dp.close()
                 else:
