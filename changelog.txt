@@ -1,3 +1,6 @@
+[B]1.2.1[/B]
+- Rajout de lecture de bandes annonces du film pendant la recherche et le telechargement
+- A defaut lecture d'une bande annonce aleatoire de la bibliotheque
 [B]1.2.0[/B]
 - Refonte des menus (pour eviter le sorties brutales)
 - Rajout de la possibilite de supprimer un film de sa wanted list

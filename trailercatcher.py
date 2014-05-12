@@ -19,6 +19,8 @@ import re
 from bs4 import BeautifulSoup
 import xbmc
 import xbmcgui
+import simplejson
+import random
 api = allocine()
 api.configure('100043982026','29d185d98c984a359e6e6f26a0474269')
 rootDir = os.path.dirname(os.path.abspath(__file__))
@@ -435,18 +437,20 @@ class trailercatcher(object):
                 for url in listvfallo:
                     if maxqual==url['height']:
                         xbmc.Player().play(url['link'])
+                        xbmc.sleep(1000)
                         dp.close()
-                        xbmc.sleep(500)
-                        dp.create(u'Lecture dune bande annonce provisoire','','',u'en attendant la recherche et le téléchargement')
+                        xbmc.sleep(1000)
+                        dp.create(u'Lecture d\'une bande annonce provisoire','','',u'en attendant la recherche et le téléchargement')
                         
             elif listvostfrallo:
                 maxqual=self.quacontrolallo(listvostfrallo,'vostfr')
                 for url in listvostfrallo:
                     if maxqual==url['height']:
                         xbmc.Player().play(url['link'])
+                        xbmc.sleep(1000)
                         dp.close()                        
-                        xbmc.sleep(500)
-                        dp.create(u'Lecture dune bande annonce provisoire','','',u'en attendant la recherche et le téléchargement')
+                        xbmc.sleep(1000)
+                        dp.create(u'Lecture d\'une bande annonce provisoire','','',u'en attendant la recherche et le téléchargement')
                                         
             elif listvoallo:
                 maxqual=self.quacontrolallo(listvoallo,'vo')
@@ -455,12 +459,35 @@ class trailercatcher(object):
                         xbmc.Player().play(url['link'])
                         xbmc.sleep(1000)
                         dp.close()                        
-                        dp.create(u'Lecture dune bande annonce provisoire','','',u'en attendant la recherche et le téléchargement')
+                        xbmc.sleep(1000)
+                        dp.create(u'Lecture d\'une bande annonce provisoire','','',u'en attendant la recherche et le téléchargement')
+            else:
+                moviestring = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": { "properties": ["trailer"]}, "id": 1}')
+                moviestring = unicode(moviestring, 'utf-8', errors='ignore')                                                            
+                movies = simplejson.loads(moviestring)
+                havetrailer=[]
+                for movie in movies["result"]["movies"]:
+                    if '-trailer' in movie["trailer"]:
+                        havetrailer.append(movie["trailer"])
+                if havetrailer:
+                    random.shuffle(havetrailer)
+                    xbmc.Player().play(havetrailer[0])
+                    xbmc.sleep(1000)
+                    dp.close()                        
+                    xbmc.sleep(1000)
+                    dp.create(u'Lecture d\'une bande annonce aléatoire','','',u'en attendant la recherche et le téléchargement')
+                else:
+                    dp.close()                        
+                    xbmc.sleep(1000)
+                    dp.create(u'Rien à montrer','','',u'en attendant la recherche et le téléchargement')
+                
             if listvfallo:
                 maxqual=self.quacontrolallo(listvfallo,'vf')
                        
                 if maxqual>=481:
+                    xbmc.sleep(5000)
                     dp.close()
+                    xbmc.sleep(1000)
                     dp.create(u'Téléchargement','','','Bande annonce en VF en cours')
                     path=self.videodl(listvfallo,trailername,moviename,trailerpath,True,maxqual)
                     xbmcgui.Dialog().notification(u'Bande annonce téléchargée', u'Bande annonce téléchargée en VF. BDD mise à jour', xbmcgui.NOTIFICATION_INFO, 5000)
@@ -479,6 +506,7 @@ class trailercatcher(object):
                     cleanlistvf,listlowqvf=self.totqualcontrol(listgooglevf,'vf')
                     if cleanlistvf:
                         dp.close()
+                        xbmc.sleep(1000)
                         dp.create(u'Téléchargement','','','Bande annonce en VF en cours')
                         self.logg('Si jen crois google jai trouve mieux que la bande annonce allocine . Lets go')
                         path=self.videodl(cleanlistvf,trailername,moviename,trailerpath)
@@ -487,6 +515,7 @@ class trailercatcher(object):
                         return path
                     else:
                         dp.close()
+                        xbmc.sleep(1000)
                         dp.create(u'Téléchargement','','','Bande annonce en VF en cours')
                         self.logg('Rien trouve de mieux sur google pour : '+moviename+' je telecharge donc la bande annonce non HD vf Allocine')
                         maxqual=self.quacontrolallo(listvfallo,'vf')
@@ -496,6 +525,7 @@ class trailercatcher(object):
                         return path
                 else:
                     dp.close()
+                    xbmc.sleep(1000)
                     dp.create(u'Téléchargement','','','Bande annonce en VF en cours')
                     self.logg('Rien trouve de mieux sur google pour : '+moviename+' je telecharge donc la bande annonce non HD vf Allocine')
                     maxqual=self.quacontrolallo(listvfallo,'vf')
@@ -508,6 +538,7 @@ class trailercatcher(object):
                 cleanlistvf,listlowqvf=self.totqualcontrol(listgooglevf,'vf')
                 if cleanlistvf:
                     dp.close()
+                    xbmc.sleep(1000)
                     dp.create(u'Téléchargement','','','Bande annonce en VF en cours')
                     self.logg('Si jen crois google jai trouve mieux que la bande annonce allocine . Lets go')
                     path=self.videodl(cleanlistvf,trailername,moviename,trailerpath)
@@ -516,6 +547,7 @@ class trailercatcher(object):
                     return path
                 elif listlowqvf:
                     dp.close()
+                    xbmc.sleep(1000)
                     dp.create(u'Téléchargement','','','Bande annonce en VF en cours')
                     self.logg('Rien trouve sur Allocine pour : ' +moviename+' je recupere donc une bande annonce non HD vf trouve sur google')
                     path=self.videodl(listlowqvf,trailername,moviename,trailerpath)
@@ -527,6 +559,7 @@ class trailercatcher(object):
                                        
                 if maxqual>=481:
                     dp.close()
+                    xbmc.sleep(1000)
                     dp.create(u'Téléchargement','','','Bande annonce en VOST en cours')
                     path=self.videodl(cleanlistvf,trailername,moviename,trailerpath,True,maxqual)
                     xbmcgui.Dialog().notification(u'Bande annonce téléchargée', u'Bande annonce téléchargée en VOST. BDD mise à jour', xbmcgui.NOTIFICATION_INFO, 5000)
@@ -537,6 +570,7 @@ class trailercatcher(object):
                         cleanlistvostfr,listlowqvostfr=self.totqualcontrol(listgooglevostfr,'vostfr')
                         if cleanlistvostfr:
                             dp.close()
+                            xbmc.sleep(1000)
                             dp.create(u'Téléchargement','','','Bande annonce en VOST en cours')
                             self.logg('Si jen crois google jai trouve mieux que la bande annonce allocine . Lets go')
                             path=self.videodl(cleanlistvostfr,trailername,moviename,trailerpath)
@@ -545,6 +579,7 @@ class trailercatcher(object):
                             return path   
                         else:
                             dp.close()
+                            xbmc.sleep(1000)
                             dp.create(u'Téléchargement','','','Bande annonce en VOST en cours') 
                             self.logg('Rien trouve de mieux sur google pour : '+moviename+' je telecharge donc la bande annonce non HD vostfr Allocine')
                             path=self.videodl(listvostfrallo,trailername,moviename,trailerpath,True,maxqual)
@@ -553,6 +588,7 @@ class trailercatcher(object):
                             return path
                     else:
                         dp.close()
+                        xbmc.sleep(1000)
                         dp.create(u'Téléchargement','','','Bande annonce en VOST en cours')
                         self.logg('Rien trouve de mieux sur google pour : '+moviename+' je telecharge donc la bande annonce non HD vostfr Allocine')
                         path=self.videodl(listvostfrallo,trailername,moviename,trailerpath,True,maxqual)
@@ -564,6 +600,7 @@ class trailercatcher(object):
                 cleanlistvostfr,listlowqvostfr=self.totqualcontrol(listgooglevostfr,'vostfr')
                 if cleanlistvostfr:
                     dp.close()
+                    xbmc.sleep(1000)
                     dp.create(u'Téléchargement','','','Bande annonce en VOST en cours')
                     self.logg('Si jen crois google jai trouve mieux que la bande annonce allocine . Lets go')
                     path=self.videodl(cleanlistvostfr,trailername,moviename,trailerpath)
@@ -572,6 +609,7 @@ class trailercatcher(object):
                     return path
                 elif listlowqvostfr:
                     dp.close()
+                    xbmc.sleep(1000)
                     dp.create(u'Téléchargement','','','Bande annonce en VOST en cours')
                     self.logg('Rien trouve sur Allocine pour : ' +moviename+' je recupere donc une bande annonce non HD vostfr trouve sur google')
                     path=self.videodl(listlowqvostfr,trailername,moviename,trailerpath)
@@ -583,6 +621,7 @@ class trailercatcher(object):
                
                 if maxqual>=481:
                     dp.close()
+                    xbmc.sleep(1000)
                     dp.create(u'Téléchargement','','','Bande annonce en VO en cours')
                     path=self.videodl(listvoallo,trailername,moviename,trailerpath,True,maxqual)
                     xbmcgui.Dialog().notification(u'Bande annonce téléchargée', u'Bande annonce téléchargée en VO. BDD mise à jour', xbmcgui.NOTIFICATION_INFO, 5000)
@@ -593,6 +632,7 @@ class trailercatcher(object):
                         cleanlistvo,listlowqvo=self.totqualcontrol(listgooglevo,'vo')
                         if cleanlistvo:
                             dp.close()
+                            xbmc.sleep(1000)
                             dp.create(u'Téléchargement','','','Bande annonce en VO en cours')
                             self.logg('Si jen crois google jai trouve mieux que la bande annonce allocine . Lets go')
                             path=self.videodl(cleanlistvo,trailername,moviename,trailerpath)
@@ -601,6 +641,7 @@ class trailercatcher(object):
                             return path   
                         else: 
                             dp.close()
+                            xbmc.sleep(1000)
                             dp.create(u'Téléchargement','','','Bande annonce en VO en cours')
                             self.logg('Rien trouve de mieux sur google pour : '+moviename+' je telecharge donc la bande annonce non HD vo Allocine')
                             path=self.videodl(listvoallo,trailername,moviename,trailerpath,True,maxqual)
@@ -609,6 +650,7 @@ class trailercatcher(object):
                             return path
                     else:
                         dp.close()
+                        xbmc.sleep(1000)
                         dp.create(u'Téléchargement','','','Bande annonce en VO en cours') 
                         self.logg('Rien trouve de mieux sur google pour : '+moviename+' je telecharge donc la bande annonce non HD vo Allocine')
                         path=self.videodl(listvoallo,trailername,moviename,trailerpath,True,maxqual)
@@ -620,6 +662,7 @@ class trailercatcher(object):
                 cleanlistvo,listlowqvo=self.totqualcontrol(listgooglevo,'vos')
                 if cleanlistvo:
                     dp.close()
+                    xbmc.sleep(1000)
                     dp.create(u'Téléchargement','','','Bande annonce en VO en cours')
                     self.logg('Si jen crois google jai trouve mieux que la bande annonce allocine . Lets go')
                     path=self.videodl(cleanlistvo,trailername,moviename,trailerpath)
@@ -628,6 +671,7 @@ class trailercatcher(object):
                     return path
                 elif listlowqvo:
                     dp.close()
+                    xbmc.sleep(1000)
                     dp.create(u'Téléchargement','','','Bande annonce en VO en cours')
                     self.logg('Rien trouve sur Allocine pour : ' +moviename+' je recupere donc une bande annonce non HD vo trouve sur google')
                     path=self.videodl(listlowqvo,trailername,moviename,trailerpath)
@@ -635,7 +679,9 @@ class trailercatcher(object):
                     dp.close()
                     return path
             else:
-                logg('Snifff encore un film pourri pas de bande annonce trouve pour ' + moviename)
+                self.logg('Snifff encore un film pourri pas de bande annonce trouve pour ' + moviename)
+                dp.close()
                 xbmcgui.Dialog().notification(u'Bande annonce non trouvée', u'Allez la chercher à la main', xbmcgui.NOTIFICATION_INFO, 5000)
+                xbmc.sleep(3250)
                 return False
             
