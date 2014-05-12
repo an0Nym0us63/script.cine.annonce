@@ -310,7 +310,7 @@ class trailercatcher(object):
            
     def quacontrol(self,url):
         quallist=[]
-        p=subprocess.Popen([sys.executable, 'youtube_dl/__main__.py', '-F',url],cwd=rootDir, shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        p=subprocess.Popen([os.path.join(rootDir,'youtube-dl.exe'), '-F',url], shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         while p.poll() is None:
             l = p.stdout.readline()
             quallist.append(l)
@@ -342,6 +342,7 @@ class trailercatcher(object):
                     try:
                         urllib.urlretrieve(linkallo, os.path.join(trailerpath,trailername)+'.'+extallo)
                         self.logg('Une bande annonce telechargee pour ' + moviename +' sur Allocine')
+                        
                         return trailerpath+'/'+trailername+'.'+extallo
                         break
                     except:
@@ -355,7 +356,7 @@ class trailercatcher(object):
                         self.logg('En train de telecharger : ' + bo + ' pour ' +moviename)
                         tempdest=unicodedata.normalize('NFKD', os.path.join(rootDir,trailername.replace("'",''))).encode('ascii','ignore')+u'.%(ext)s'
                         dest=os.path.join(trailerpath,trailername)
-                        p=subprocess.Popen([sys.executable, 'youtube_dl/__main__.py', '-o',tempdest,'--newline', '--max-filesize', '105m', '--format','best',bo],cwd=rootDir, shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+                        p=subprocess.Popen([os.path.join(rootDir,'youtube-dl.exe'), '-o',tempdest,'--newline', '--max-filesize', '105m', '--format','best',bo],shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
                         while p.poll() is None:
                             l = p.stdout.readline()
                             if 'download' in l:
@@ -374,13 +375,11 @@ class trailercatcher(object):
                                     shutil.move(listfile, destination)
                                     bocount=1
                                     self.logg('Une bande annonce telechargee pour ' + moviename)
-                                    if 'youtube' in bo:
-                                        countyoutube+=1
-                                    else:
-                                        countdaily+=1
-                                    return trailerpath+'/'+trailername+'.'+ext
+                                    
+                                    return trailerpath+'/'+trailername+ext
                         
-                    except:
+                    except Exception,e:
+                        print str(e)
                         continue
                 else:
                     continue
@@ -431,10 +430,35 @@ class trailercatcher(object):
             trailername=movie[2]+'-trailer'
             searchstring=moviename
             listvfallo,listvostfrallo,listvoallo=self.allocinesearch(moviename)
-            
             if listvfallo:
                 maxqual=self.quacontrolallo(listvfallo,'vf')
-                
+                for url in listvfallo:
+                    if maxqual==url['height']:
+                        xbmc.Player().play(url['link'])
+                        dp.close()
+                        xbmc.sleep(500)
+                        dp.create(u'Lecture dune bande annonce provisoire','','',u'en attendant la recherche et le téléchargement')
+                        
+            elif listvostfrallo:
+                maxqual=self.quacontrolallo(listvostfrallo,'vostfr')
+                for url in listvostfrallo:
+                    if maxqual==url['height']:
+                        xbmc.Player().play(url['link'])
+                        dp.close()                        
+                        xbmc.sleep(500)
+                        dp.create(u'Lecture dune bande annonce provisoire','','',u'en attendant la recherche et le téléchargement')
+                                        
+            elif listvoallo:
+                maxqual=self.quacontrolallo(listvoallo,'vo')
+                for url in listvoallo:
+                    if maxqual==url['height']:
+                        xbmc.Player().play(url['link'])
+                        xbmc.sleep(1000)
+                        dp.close()                        
+                        dp.create(u'Lecture dune bande annonce provisoire','','',u'en attendant la recherche et le téléchargement')
+            if listvfallo:
+                maxqual=self.quacontrolallo(listvfallo,'vf')
+                       
                 if maxqual>=481:
                     dp.close()
                     dp.create(u'Téléchargement','','','Bande annonce en VF en cours')
@@ -500,6 +524,7 @@ class trailercatcher(object):
                     return path
             elif listvostfrallo:
                 maxqual=self.quacontrolallo(listvostfrallo,'vostfr')
+                                       
                 if maxqual>=481:
                     dp.close()
                     dp.create(u'Téléchargement','','','Bande annonce en VOST en cours')
@@ -555,6 +580,7 @@ class trailercatcher(object):
                     return path
             elif listvoallo:
                 maxqual=self.quacontrolallo(listvoallo,'vo')
+               
                 if maxqual>=481:
                     dp.close()
                     dp.create(u'Téléchargement','','','Bande annonce en VO en cours')

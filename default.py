@@ -24,7 +24,7 @@ class blankWindow(xbmcgui.WindowXML):
         pass
 
 def selectchoice():
-    success = False  
+    
     Choice = ['1 - Proposition de films','2 - Voir mes bandes-annonces', '3 - Suggestions','4 - Rechercher un film','5 - Gestion des bandes-annonces','6 - Consulter sa wanted list','7 - Quitter']
     selectedchoice = xbmcgui.Dialog().select(u"Que voulez vous faire ?", Choice)
     if not selectedchoice == -1:
@@ -3126,9 +3126,12 @@ while sortie==False:
                                     path=path.replace('\\','\\\\')
                                     xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (onlinetrailer[selectChoice]['movieid'],path.encode('utf-8')) )
                                 xbmc.Player().play(path)
+                                dp.close()
+                                dp.create(u'Lecture de la bande annonce','','',u'Bande annonce récupérée')
                                 sortiecinqun=True
                                 while xbmc.Player().isPlaying():                
                                     xbmc.sleep(250)
+                                dp.close()
                         else:
                             sortiecinqun=True
                 elif selectChoice==2:
@@ -3155,9 +3158,11 @@ while sortie==False:
                                     path=path.replace('\\','\\\\')
                                     xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (notrailer[selectChoice]['movieid'],path.encode('utf-8')) )
                                 xbmc.Player().play(path)
+                                dp.create(u'Lecture de la bande annonce','','',u'Bande annonce récupérée')
                                 sortiecinqdeux=True
                                 while xbmc.Player().isPlaying():                
                                     xbmc.sleep(250)
+                                dp.close()
                         else:
                             sortiecinqdeux=True
                 elif selectChoice==3:
