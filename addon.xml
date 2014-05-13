@@ -29,6 +29,7 @@
 		Un appui sur fleche droite passera à la bande annonce suivante
 		Un appui sur retour ou x (stop) permet de quitter le script
 		Un appui sur OK ou entree pendant une BA du mode 1 ou 2 lancera directement le film
+		Un appui sur Q pendant une bande annonce des modes 3 et 4 permet d'ignorer la bande annonce et qu'elle ne soit plus proposee dans les suggestions
 	</description>
 	<license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 	<forum></forum>
