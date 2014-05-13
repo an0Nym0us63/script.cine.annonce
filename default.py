@@ -25,7 +25,7 @@ class blankWindow(xbmcgui.WindowXML):
 
 def selectchoice():
     success = False
-    Choice = ['1 - Proposition de films','2 - Voir mes bandes-annonces', '3 - Suggestions','4 - Rechercher un film','5 - Gestion des bandes-annonces','6 - Consulter sa wanted list','7 - Quitter']
+    Choice = ['1 - Proposition de films','2 - Voir mes bandes-annonces', '3 - Suggestions','4 - Rechercher un film','5 - Gestion des bandes-annonces','6 - Consulter ses listes','7 - Quitter']
     selectedchoice = xbmcgui.Dialog().select(u"Que voulez vous faire ?", Choice)
     if not selectedchoice == -1:
         selectedchoice = Choice[selectedchoice]
@@ -44,7 +44,7 @@ def selectchoice():
         elif selectedchoice == '5 - Gestion des bandes-annonces':
             selectedchoice=5
             success = True
-        elif selectedchoice == '6 - Consulter sa wanted list':
+        elif selectedchoice == '6 - Consulter ses listes':
             selectedchoice=6
             success = True
         else:
@@ -1685,13 +1685,15 @@ while sortie==False:
                     ACTION_M = 122
                     ACTION_Q=34
                     ACTION_STOP = 13
+                    ACTION_G = 61511
                     
                     global exit_requested
                     global movie_file
                     global source
                     global trailer
                     movie_file=''
-                    xbmc.log(str(action.getId()))
+                    xbmc.log('Code action : '+str(action.getId()))
+                    xbmc.log('Code button : '+str(action.getButtonCode()))
                     if action == ACTION_Q:
                         if trailer['imdbid']<>'':
                             strCouchPotato='plugin://plugin.video.couchpotato_manager/movies/add?title='+trailer['title']+'&imdb_id='+str(trailer['imdbid'])
@@ -1708,7 +1710,7 @@ while sortie==False:
                                 xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
                         else:
                             if not wantedpath:
-                                xbmcgui.Dialog().notification(u'Répertoire manquant pour wanted list', u'Vous devez spécifiez un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
+                                xbmcgui.Dialog().notification(u'Répertoire manquant pour wanted list', u'Vous devez spécifier un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
                             else:
                                 alreadywanted=[]
                                 try:
@@ -1729,6 +1731,31 @@ while sortie==False:
                                     LF.write(strtowrite)
                                     LF.close()
                                     xbmcgui.Dialog().notification(u'Film ajouté', title+u' ajouté dans votre wanted list', xbmcgui.NOTIFICATION_INFO, 5000)
+                                    
+                    if action.getButtonCode() == ACTION_G:
+                        if not wantedpath:
+                            xbmcgui.Dialog().notification(u'Répertoire manquant pour ignore list', u'Vous devez spécifier un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
+                        else:
+                            alreadyignored=[]
+                            try:
+                                title=trailer['title'].decode('utf-8')
+                            except:
+                                title=trailer['title']
+                            if os.path.isfile(wantedpath+'\IGNOREDMOVIE.txt'):
+                                LF=open(wantedpath+'\IGNOREDMOVIE.txt', 'r')
+                                for line in LF:
+                                    alreadyignored.append(line.replace('\n','').decode('utf-8'))
+                                LF.close()
+                            if title+u' - '+ unicode(trailer['year']) in alreadyignored:
+                                    xbmcgui.Dialog().notification(u'Déjà présent', title+u' est déjà présent dans votre ignore list', xbmcgui.NOTIFICATION_INFO, 5000)
+                            else:
+                                LF = open(wantedpath+'\IGNOREDMOVIE.txt', 'a')
+                                strtowrite=title+u' - '+ unicode(trailer['year'])+ u'\n'
+                                strtowrite=strtowrite.encode('utf-8')
+                                LF.write(strtowrite)
+                                LF.close()
+                                xbmcgui.Dialog().notification(u'Film ajouté', title+u' ajouté dans votre ignore list', xbmcgui.NOTIFICATION_INFO, 5000)
+                                xbmc.Player().stop()
                     
                     if action == ACTION_PREVIOUS_MENU or action == ACTION_LEFT or action == ACTION_BACK or action == ACTION_STOP:
                         xbmc.Player().stop()
@@ -1907,7 +1934,7 @@ while sortie==False:
                                 xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
                         else:
                             if not wantedpath:
-                                xbmcgui.Dialog().notification(u'Répertoire manquant pour wanted list', u'Vous devez spécifiez un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
+                                xbmcgui.Dialog().notification(u'Répertoire manquant pour wanted list', u'Vous devez spécifier un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
                             else:
                                 alreadywanted=[]
                                 try:
@@ -2019,7 +2046,8 @@ while sortie==False:
                                 addon.getLocalizedString(32049),
                                 addon.getLocalizedString(32052),
                                 addon.getLocalizedString(32047),
-                                addon.getLocalizedString(32048)]
+                                addon.getLocalizedString(32048),
+                                'Revenir au menu principal']
                     # prompt user to select genre
                     selectChoice = xbmcgui.Dialog().select(u"Type de bandes annnonces", mychoice)
                     if selectChoice==4:
@@ -2035,17 +2063,40 @@ while sortie==False:
                     elif selectChoice==3:
                         choice='dvd'   
                     else:
-                        choice='none'        
-                dp=xbmcgui.DialogProgress()
-                dp.create('Suggestions','','','Chargement des bande-annonces')
-                tmdbTrailers=getTmdbTrailers(choice)
-                for trailer in tmdbTrailers:
-                    trailers.append(trailer)    
-                exit_requested=False
-                if dp.iscanceled():exit_requested=True 
-                dp.close()
-                if len(trailers) > 0 and not exit_requested:
-                    playTrailers()
+                        choice='none'
+                if choice<>'none':     
+                    dp=xbmcgui.DialogProgress()
+                    dp.create('Suggestions','','','Chargement des bande-annonces')
+                    tmdbTrailers=getTmdbTrailers(choice)
+                    for trailer in tmdbTrailers:
+                        trailers.append(trailer)    
+                    exit_requested=False
+                    if dp.iscanceled():exit_requested=True 
+                    dp.close()
+                    if len(trailers) > 0 and not exit_requested:
+                        alreadyignored=[]
+                        if os.path.isfile(wantedpath+'\IGNOREDMOVIE.txt'):
+                                    LF=open(wantedpath+'\IGNOREDMOVIE.txt', 'r')
+                                    for line in LF:
+                                        alreadyignored.append(line.replace('\n','').decode('utf-8'))
+                                    LF.close()
+                        print str(len(trailers))+ 'trailer total'
+                        print str(len(alreadyignored))+' ignored'
+                        numbercontrol=0
+                        for tocontrol in trailers:
+                            try:
+                                title=tocontrol['title'].decode('utf-8')
+                            except:
+                                title=tocontrol['title']
+                                
+                            for alreadytitle in alreadyignored:
+                                if title in alreadytitle: 
+                                    del trailers[numbercontrol]
+                                    print 'removed '+title.encode('utf-8')
+                                    break
+                            numbercontrol+=1
+                        print 'final '+str(len(trailers))
+                        playTrailers()
                 
                         
             else:
@@ -2196,8 +2247,7 @@ while sortie==False:
                     if addon.getSetting("tmdb_source") == '3':source='now_playing'
                     if addon.getSetting("tmdb_source") == '4':source='dvd'
                     if addon.getSetting("tmdb_source") == '5':source='all'
-                elif choice=='none':
-                    source='all'
+               
                 else:
                     source=choice
                 
@@ -2638,7 +2688,7 @@ while sortie==False:
                                 xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
                         else:
                             if not wantedpath:
-                                xbmcgui.Dialog().notification(u'Répertoire manquant pour wanted list', u'Vous devez spécifiez un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
+                                xbmcgui.Dialog().notification(u'Répertoire manquant pour wanted list', u'Vous devez spécifier un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
                             else:
                                 alreadywanted=[]
                                 try:
@@ -2837,7 +2887,7 @@ while sortie==False:
                                 xbmc.executebuiltin('XBMC.RunPlugin('+strCouchPotato+')')
                         else:
                             if not wantedpath:
-                                xbmcgui.Dialog().notification(u'Répertoire manquant pour wanted list', u'Vous devez spécifiez un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
+                                xbmcgui.Dialog().notification(u'Répertoire manquant pour wanted list', u'Vous devez spécifier un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
                             else:
                                 alreadywanted=[]
                                 try:
@@ -3137,6 +3187,12 @@ while sortie==False:
                                     while xbmc.Player().isPlaying():                
                                         xbmc.sleep(250)
                                     dp.close()
+                                    delete= xbmcgui.Dialog().yesno("Cette bande annonce ne vous plait pas pourtant c'est la meilleure ?","Ne pas garder la bande annnonce ?",'','','Garder','Supprimer')
+                                    if delete:
+                                        os.remove(path.replace('smb:',''))
+                                        xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (onlinetrailer[selectChoice]['movieid'],onlinetrailer[selectChoice]['trailer']) )
+                                        xbmcgui.Dialog().notification(u'Bande annonce supprimée', u'Allez donc la chercher à la main', xbmcgui.NOTIFICATION_INFO, 2000)
+                                        xbmc.sleep(2000)
                                 else:
                                     xbmc.Player().stop()
                         else:
@@ -3176,6 +3232,13 @@ while sortie==False:
                                     while xbmc.Player().isPlaying():                
                                         xbmc.sleep(250)
                                     dp.close()
+                                    delete= xbmcgui.Dialog().yesno("Cette bande annonce ne vous plait pas ?","Ne pas garder la bande annnonce ?",'','','Garder','Supprimer')
+                                    if delete:
+                                        os.remove(path.replace('smb:',''))
+                                        xbmc.executeJSONRPC('{"jsonrpc": "2.0", "id":1, "method": "VideoLibrary.SetMovieDetails", "params": { "movieid": %d , "trailer":"%s"}}' % (notrailer[selectChoice]['movieid'],'') )
+                                        xbmcgui.Dialog().notification(u'Bande annonce supprimée', u'Allez donc la chercher à la main', xbmcgui.NOTIFICATION_INFO, 2000)
+                                        xbmc.sleep(2000)
+                                    
                                 else:
                                     dp.close()
                                     xbmc.sleep(1500)
@@ -3251,38 +3314,75 @@ while sortie==False:
             wantedpath=addon.getSetting('wanted_path')
             sortiesix=False
             if not wantedpath:
-                xbmcgui.Dialog().notification(u'Répertoire manquant pour wanted list', u'Vous devez spécifiez un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
+                xbmcgui.Dialog().notification(u'Répertoire manquant pour vos listes', u'Vous devez spécifier un répertoire dans les options', xbmcgui.NOTIFICATION_INFO, 5000)
             else:
                 while sortiesix==False:
-                    alreadywanted=[]
-                    if os.path.isfile(wantedpath+'\WANTEDMOVIE.txt'):
-                        LF=open(wantedpath+'\WANTEDMOVIE.txt', 'r')
-                        for line in LF:
-                            try:
-                                alreadywanted.append(line.replace('\n','').decode('utf-8'))
-                            except:
-                                alreadywanted.append(line.replace('\n','').decode('latin-1'))
-                        LF.close()
-                    lenwanted=len(alreadywanted)
-                    if lenwanted==0:
-                        xbmcgui.Dialog().notification(u'Aucun film dans votre wanted list', u'Pensez à rajouter des films', xbmcgui.NOTIFICATION_INFO, 5000)
-                        xbmc.sleep(2000)
-                        sortiesix=True
-                    else:
-                        selectChoice = xbmcgui.Dialog().select(str(lenwanted)+" films dans votre wanted list", alreadywanted)
-                        if selectChoice>=0:
-                            delete= xbmcgui.Dialog().yesno("Effacer ?","Supprimer ce film de votre wanted list ?")
-                            if delete:
-                                LF=open(wantedpath+'\WANTEDMOVIE.txt', 'w')
-                                for lines in alreadywanted:
-                                    if lines <>alreadywanted[selectChoice]:
-                                        strtowrite=lines+ '\n'
-                                        strtowrite=strtowrite.encode('utf-8')
-                                        LF.write(strtowrite)
-                                        
-                                LF.close()
+                    sortielist=False
+                    while sortielist==False:
+                        alreadywanted=[]
+                        alreadyignored=[]
+                        if os.path.isfile(wantedpath+'\WANTEDMOVIE.txt'):
+                            LF=open(wantedpath+'\WANTEDMOVIE.txt', 'r')
+                            for line in LF:
+                                try:
+                                    alreadywanted.append(line.replace('\n','').decode('utf-8'))
+                                except:
+                                    alreadywanted.append(line.replace('\n','').decode('latin-1'))
+                            LF.close()
+                        lenwanted=len(alreadywanted)
+                        if os.path.isfile(wantedpath+'\IGNOREDMOVIE.txt'):
+                            LF=open(wantedpath+'\IGNOREDMOVIE.txt', 'r')
+                            for line in LF:
+                                try:
+                                    alreadyignored.append(line.replace('\n','').decode('utf-8'))
+                                except:
+                                    alreadyignored.append(line.replace('\n','').decode('latin-1'))
+                            LF.close()
+                        lenignored=len(alreadyignored)
+                        
+                        selectlist = xbmcgui.Dialog().select(u'Quelle liste voulez-vous ?', [str(lenwanted)+" films dans votre wanted list",str(lenignored)+" films dans votre ignored list",'Retour au menu principal'])
+                        if selectlist==0:
+                            if lenwanted==0:
+                                xbmcgui.Dialog().notification(u'Aucun film dans votre wanted list', u'Pensez à rajouter des films', xbmcgui.NOTIFICATION_INFO, 5000)
+                                xbmc.sleep(2000)
+                                sortielist=True
+                            else:
+                                selectChoice = xbmcgui.Dialog().select(str(lenwanted)+" films dans votre wanted list", alreadywanted)
+                                if selectChoice>=0:
+                                    delete= xbmcgui.Dialog().yesno("Effacer ?","Supprimer ce film de votre wanted list ?")
+                                    if delete:
+                                        LF=open(wantedpath+'\WANTEDMOVIE.txt', 'w')
+                                        for lines in alreadywanted:
+                                            if lines <>alreadywanted[selectChoice]:
+                                                strtowrite=lines+ '\n'
+                                                strtowrite=strtowrite.encode('utf-8')
+                                                LF.write(strtowrite)
+                                                sortielist=True
+                                        LF.close()
+                                else:
+                                    sortielist=True
+                        elif selectlist==1:                                                              
+                            if lenignored==0:
+                                xbmcgui.Dialog().notification(u'Aucun film dans votre ignored list', u'Pensez à rajouter des films', xbmcgui.NOTIFICATION_INFO, 5000)
+                                xbmc.sleep(2000)
+                                sortielist=True
+                            else:
+                                selectChoice = xbmcgui.Dialog().select(str(lenignored)+" films dans votre ignored list", alreadyignored)
+                                if selectChoice>=0:
+                                    delete= xbmcgui.Dialog().yesno("Effacer ?","Supprimer ce film de votre ignored list ?")
+                                    if delete:
+                                        LF=open(wantedpath+'\IGNOREDMOVIE.txt', 'w')
+                                        for lines in alreadyignored:
+                                            if lines <>alreadyignored[selectChoice]:
+                                                strtowrite=lines+ '\n'
+                                                strtowrite=strtowrite.encode('utf-8')
+                                                LF.write(strtowrite)
+                                                sortielist=True
+                                        LF.close()
+                                else:
+                                    sortielist=True
                         else:
-                            sortiesix=True                                                               
-        
+                            sortielist=True
+                            sortiesix=True
     else:
         sortie=True    

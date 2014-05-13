@@ -1,3 +1,6 @@
+[B]1.2.2[/B]
+- Rajout d'une ignore list pour ne plus avoir la bande annonce d'un film montree dans les suggestions
+- Rajout de la possibilite de ne pas garder une bande annonce telechargee
 [B]1.2.1[/B]
 - Rajout de lecture de bandes annonces du film pendant la recherche et le telechargement
 - A defaut lecture d'une bande annonce aleatoire de la bibliotheque
